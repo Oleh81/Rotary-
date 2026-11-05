@@ -5,7 +5,7 @@ import Img from '../components/Img.astro';
 import VideoCard from '../components/VideoCard.astro';
 import WorldMap from '../components/WorldMap.astro';
 import Globe from '../components/Globe.astro';
-import LoadingCartoon from '../components/LoadingCartoon.astro';
+import LoadingScene from '../components/LoadingScene.astro';
 import { stats, perContainer, process, shipments, clubs, countries, DONATE_URL, awards } from '../data/site';
 import { news } from '../lib/cms';
 import { countryHref } from '../lib/countries';
@@ -124,13 +124,13 @@ const latestNews = news.slice(0, 3);
         <h2 id="container-title" class="reveal mt-4 font-display text-[clamp(2rem,4.4vw,3.6rem)] leading-[1.06] tracking-tight" style="--d:1">One 40-foot container can equip a hospital.</h2>
       </div>
 
-      <div class="mt-14 grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-center">
-        <!-- Cartoon: volunteers loading a container -->
-        <div class="reveal-scale relative overflow-hidden rounded-[1.5rem] shadow-[0_40px_60px_-30px_rgba(10,27,51,.45)] ring-1 ring-line">
-          <LoadingCartoon />
-        </div>
+      <!-- 3D scene: volunteers and a forklift loading a container -->
+      <div class="reveal-scale relative mt-14 overflow-hidden rounded-[1.5rem] shadow-[0_40px_60px_-30px_rgba(10,27,51,.45)] ring-1 ring-line">
+        <LoadingScene />
+      </div>
 
-        <dl class="grid gap-4">
+      <div class="mt-6">
+        <dl class="grid gap-4 md:grid-cols-3">
           {[
             { v: perContainer.replacementValue, pre: '$', label: 'estimated average replacement value of the goods in one container' },
             { v: perContainer.livesImpacted, suf: '+', label: 'lives directly impacted by each container (estimated)' },
