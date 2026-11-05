@@ -74,27 +74,27 @@ export const awards = {
   },
   ralphieIntro: 'In 2015 we created a very special award for individuals who have demonstrated exceptional Service Above Self to Rotary World Help. It is not necessarily given every year; when it is, it is presented at the AGM. The award is called “The Ralphie” in honour of Ralph Towsley, the surviving member of the three founders of Rotary World Help.',
   ralphies: [
-    { year: '2015', name: 'Ralph Towsley', text: 'The first “Ralphie” for Exceptional Service Above Self. Ralph is one of the three founding members and never misses a meeting or a loading.', img: '299' },
-    { year: '2016', name: 'George and Lorraine Sandwith', text: 'With RWH since its inception. George ran the warehouse, and Lorraine oversaw sorting, packing and recording all donated items. George is a member of the New Westminster Rotary Club.', img: '316' },
-    { year: '2017', name: 'Dan Gallant', text: 'With RWH for many years, Dan oversaw all trucking and took over warehouse duties when George Sandwith retired. A long-time Rotarian with 35 years of perfect attendance, Port Moody Rotary Club.', img: '317' },
-    { year: '2018', name: 'D’Arcy Warner', text: 'A dedicated RWH member with the Vancouver Rotary Club, D’Arcy has contributed as an officer, a director and our long-standing secretary.', img: '1534' },
-    { year: '2022', name: 'Elena Agala', text: '', img: '1537' },
-    { year: '2022', name: 'Wayne Crossen', text: '', img: '1536' },
-    { year: '2023', name: 'Bobby Yagin', text: '', img: '1535' },
-    { year: '2023', name: 'Ron Allegretto', text: '', img: '1590' },
-    { year: '2024', name: 'Flora and Bernie Pregler', text: '', img: '1591' },
-    { year: '2024', name: 'Jim McGrandles', text: '', img: '1592' },
-    { year: '2024', name: 'Michael and Jane Woolnough', text: '', img: '1593' },
-    { year: '2024', name: 'Janice Froese', text: '', img: '' },
+    { year: '2015', name: 'Ralph Towsley', text: 'The first “Ralphie” for Exceptional Service Above Self. Ralph is one of the three founding members and never misses a meeting or a loading.', img: '298' },
+    { year: '2016', name: 'George and Lorraine Sandwith', text: 'With RWH since its inception. George ran the warehouse, and Lorraine oversaw sorting, packing and recording all donated items. George is a member of the New Westminster Rotary Club.', img: '299' },
+    { year: '2017', name: 'Dan Gallant', text: 'With RWH for many years, Dan oversaw all trucking and took over warehouse duties when George Sandwith retired. A long-time Rotarian with 35 years of perfect attendance, Port Moody Rotary Club.', img: '316' },
+    { year: '2018', name: 'D’Arcy Warner', text: 'A dedicated RWH member with the Vancouver Rotary Club, D’Arcy has contributed as an officer, a director and our long-standing secretary.', img: '317' },
+    { year: '2022', name: 'Elena Agala', text: '', img: '1534' },
+    { year: '2022', name: 'Wayne Crossen', text: '', img: '1537' },
+    { year: '2023', name: 'Bobby Yagin', text: '', img: '1536' },
+    { year: '2023', name: 'Ron Allegretto', text: '', img: '1535' },
+    { year: '2024', name: 'Flora and Bernie Pregler', text: '', img: '1590' },
+    { year: '2024', name: 'Jim McGrandles', text: '', img: '1591' },
+    { year: '2024', name: 'Michael and Jane Woolnough', text: '', img: '1592' },
+    { year: '2024', name: 'Janice Froese', text: '', img: '1593' },
   ],
 };
 
 export const sponsors = [
-  { name: 'Argus Carriers', img: '304' },
+  { name: 'Argus Carriers', img: '/uploads/sponsors/argus-carriers.webp' },
   { name: 'TD Bank', img: '309' },
   { name: 'Days for Girls', img: '306' },
   { name: 'ColorTrek', img: '307' },
-  { name: 'Sunbelt Rentals', img: '' },
+  { name: 'Sunbelt Rentals', img: '304' },
 ];
 
 // Countries and number of containers, from the RWH chart "RWH Shipments – 61 Countries" (May 2022).
