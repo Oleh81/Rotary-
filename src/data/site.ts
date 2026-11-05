@@ -18,7 +18,7 @@ export const org = {
   phone: settings.contact.phone,
   phoneHref: 'tel:+1' + settings.contact.phone.replace(/\D/g, '').replace(/^1(?=\d{10}$)/, ''),
   warehouse: {
-    lines: ['Distribution Building (Building P)', 'Thistle Place, Riverview Hospital grounds', '2601 Lougheed Hwy', 'Coquitlam, BC'],
+    lines: ['Distribution Building (Building P)', 'Thistle Place, Riverview Hospital grounds', '2601 Lougheed Hwy', 'Coquitlam, BC (Greater Vancouver)'],
     gps: 'Thistle Place, Coquitlam, BC',
     maps: 'https://www.google.com/maps/search/?api=1&query=Thistle+Place%2C+Coquitlam%2C+BC',
   },

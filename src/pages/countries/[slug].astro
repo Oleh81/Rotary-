@@ -18,7 +18,7 @@ const display = c.name.replace(/\s*\(.*\)/, '');
 const fmt = (d: string) => new Date(d + 'T12:00:00').toLocaleDateString('en-CA', { month: 'long', day: 'numeric', year: 'numeric' });
 const cover = c.ships[0]?.photos[0] ?? c.stories.find(s => s.image)?.image;
 const empty = !c.ships.length && !c.stories.length && !c.vids.length && !c.archived.length && !c.albums.length;
-const desc = `Rotary World Help has sent ${c.count} ${c.count === 1 ? 'container' : 'containers'} of medical and educational equipment from Coquitlam, BC to ${display}.${c.stories.length ? ` Stories, photos and videos.` : ''}`;
+const desc = `Rotary World Help has sent ${c.count} ${c.count === 1 ? 'container' : 'containers'} of medical and educational equipment from Coquitlam in Greater Vancouver, Canada, to ${display}.${c.stories.length ? ` Stories, photos and videos.` : ''}`;
 ---
 <Layout title={`${display}: containers, stories and photos`} overlay description={desc.slice(0, 158)} image={cover && hasImg(cover) ? img(cover)!.src : undefined}>
   <section class="relative isolate overflow-hidden bg-ink pt-[72px] text-white on-dark grain">
@@ -31,7 +31,7 @@ const desc = `Rotary World Help has sent ${c.count} ${c.count === 1 ? 'container
         <h1 class="fade-up mt-3 font-display text-[clamp(2.6rem,6vw,5rem)] leading-[1.02] tracking-tight" style="--delay:.2s">{display}</h1>
         <p class="fade-up mt-6 flex items-baseline gap-3" style="--delay:.35s">
           <span class="font-display text-7xl text-gold tabular" data-count={c.count}>{c.count}</span>
-          <span class="text-xl text-white/85">{c.count === 1 ? 'container' : 'containers'} of medical and educational equipment, sent from Coquitlam, BC</span>
+          <span class="text-xl text-white/85">{c.count === 1 ? 'container' : 'containers'} of medical and educational equipment, sent from Greater Vancouver, Canada</span>
         </p>
         <p class="fade-up mt-4 text-sm text-white/60" style="--delay:.45s">Count from the Rotary World Help chart “RWH Shipments – 61 Countries” (May 2022).</p>
         <nav class="fade-up mt-8 flex flex-wrap gap-2 text-sm" style="--delay:.55s" aria-label="On this page">

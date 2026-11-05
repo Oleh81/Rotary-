@@ -14,7 +14,7 @@ const fmt = (d: string) => new Date(d + 'T12:00:00').toLocaleDateString('en-CA',
 const byYear = shipments.reduce((acc, s) => { (acc[s.date.slice(0, 4)] ||= []).push(s); return acc; }, {} as Record<string, typeof shipments>);
 const years = Object.keys(byYear).sort().reverse();
 ---
-<Layout title="Gallery" overlay description="Photos of every recent Rotary World Help container loading in Coquitlam, 2024 to 2026, plus a record of earlier shipments.">
+<Layout title="Gallery" overlay description="Photos of every recent Rotary World Help container loading in Coquitlam, Greater Vancouver, 2024 to 2026, plus a record of earlier shipments.">
   <PageHero page="gallery" eyebrow="Gallery" title="Every container, loaded by hand." img="1919"
     lead={`${shipments.length} recent loadings and ${extraAlbums.length} albums from ${albumYears}, with the volunteers and sponsors who made them happen. Tap any photo to enlarge it, or open a loading to see every photo.`}>
     <nav aria-label="Years" class="fade-up mt-8 flex flex-wrap gap-2" style="--delay:.8s">
