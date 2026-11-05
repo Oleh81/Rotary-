@@ -1,21 +1,33 @@
 ---
-// Looping animation of a container loading (rendered video, plays without loading the page's main thread).
+// 3D isometric loading scene (three.js, loaded only when the section scrolls near the screen).
 ---
-<div class="relative aspect-video w-full bg-[#f3eee6]" data-loop>
-  <video class="absolute inset-0 h-full w-full object-cover" muted loop playsinline preload="none"
-    poster="/media/video/loading-loop.webp" width="1280" height="720"
-    aria-label="Animation: volunteers and forklifts move hospital beds, wheelchairs, an X-ray machine, incubators, a dental chair, computers and boxes of supplies from the Rotary World Help warehouse into a shipping container.">
-    <source src="/media/video/loading-loop.mp4" type="video/mp4" />
-  </video>
+<div class="relative aspect-[4/3] md:aspect-[2/1] w-full bg-[linear-gradient(180deg,#dbe8f7_0%,#eef3f9_55%,#e7e1d6_100%)]" data-scene>
+  <canvas class="absolute inset-0 h-full w-full" role="img"
+    aria-label="Animation: volunteers and a forklift move hospital beds, wheelchairs, an X-ray machine, incubators, a dental chair, computers and boxes of supplies from the Rotary World Help warehouse into a shipping container."></canvas>
 </div>
 
 <script>
-  document.querySelectorAll<HTMLElement>('[data-loop]').forEach(el => {
-    const v = el.querySelector('video')!;
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  function start(el: HTMLElement) {
+    const canvas = el.querySelector('canvas')!;
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let scene: { play(): void; pause(): void } | null = null;
     let visible = false;
-    const sync = () => { if (visible && !document.hidden) v.play().catch(() => {}); else v.pause(); };
-    new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible && v.preload === 'none') { v.preload = 'auto'; } sync(); }, { rootMargin: '200px' }).observe(el);
+    const sync = () => { if (!scene) return; visible && !document.hidden ? scene.play() : scene.pause(); };
+    const boot = async () => {
+      try {
+        const { startLoadingScene } = await import('../scripts/loading3d');
+        scene = startLoadingScene(canvas, { still });
+        el.dataset.ready = '1';
+        sync();
+      } catch { /* no WebGL: the gradient stays */ }
+    };
+    let booted = false;
+    new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting;
+      if (visible && !booted) { booted = true; boot(); }
+      sync();
+    }, { rootMargin: '200px' }).observe(el);
     document.addEventListener('visibilitychange', sync);
-  });
+  }
+  document.querySelectorAll<HTMLElement>('[data-scene]').forEach(start);
 </script>

@@ -19,9 +19,8 @@ const isActive = (href: string) => path === href || (href !== '/' && path.starts
   )}
   <div class="wrap flex h-[72px] items-center justify-between gap-4">
     <a href="/" class="flex items-center gap-3 shrink-0 rounded-xl" aria-label="Rotary World Help, home">
-      <span class="grid h-12 w-[72px] place-items-center rounded-xl bg-white shadow-sm ring-1 ring-black/5">
-        <img src="/brand/rwh-logo.webp" alt="" width="302" height="201" class="h-10 w-auto" />
-      </span>
+      <img src="/brand/rwh-logo-240.webp" srcset="/brand/rwh-logo-240.webp 240w, /brand/rwh-logo-480.webp 480w" sizes="100px"
+        alt="" width="240" height="139" class="h-[58px] w-auto drop-shadow-[0_4px_10px_rgba(10,27,51,.25)]" />
       <span class="hidden sm:block leading-tight">
         <span class="block font-display text-[1.15rem] font-semibold">Rotary World Help</span>
         <span class="block text-[.72rem] font-semibold tracking-[.14em] uppercase opacity-75">Greater Vancouver · Since 1993</span>
