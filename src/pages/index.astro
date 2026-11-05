@@ -137,7 +137,7 @@ const latestNews = news.slice(0, 3);
             { v: perContainer.adminFee, pre: '$', label: 'administration fee per container: warehousing, pick-up and our truck' },
           ].map((s, i) => (
             <div class="reveal-x rounded-3xl bg-white p-6 md:p-7 ring-1 ring-line" style={`--d:${i}`}>
-              <dd class="font-display text-5xl md:text-6xl font-medium text-royal tabular">{s.pre}<span data-count={s.v}>{s.v.toLocaleString('en-CA')}</span>{s.suf}</dd>
+              <dd class="font-display text-[clamp(2.25rem,5vw,3.75rem)] leading-none whitespace-nowrap font-medium text-royal tabular">{s.pre}<span data-count={s.v}>{s.v.toLocaleString('en-CA')}</span>{s.suf}</dd>
               <dt class="mt-2 text-stone">{s.label}</dt>
             </div>
           ))}
