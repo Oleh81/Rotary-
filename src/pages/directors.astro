@@ -1,0 +1,38 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import Img from '../components/Img.astro';
+import { org } from '../data/site';
+import { directors } from '../lib/cms';
+const initials = (n: string) => n.split(' ').map(p => p[0]).filter(c => /[A-Z]/.test(c)).slice(0, 2).join('');
+---
+<Layout title="Our Directors" overlay description="Meet the volunteer Board of Directors of Rotary World Help, drawn from Rotary clubs across British Columbia.">
+  <PageHero page="directors" eyebrow="Our directors" title="The people steering our efforts for global change."
+    lead="Every director is a volunteer Rotarian, nominated by a member club. The Board meets an average of ten times a year." />
+  <section class="py-20 md:py-28">
+    <div class="wrap">
+      <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {directors.map((d, i) => (
+          <li class="reveal group" style={`--d:${i % 4}`}>
+            <div class="relative overflow-hidden rounded-3xl bg-sky card-lift">
+              {d.photo ? <Img id={d.photo} alt={`Portrait of ${d.name}`} class="aspect-[4/5] w-full object-cover grayscale-[35%] transition duration-700 group-hover:grayscale-0 group-hover:scale-[1.03]" sizes="(min-width:1024px) 22vw, (min-width:640px) 45vw, 100vw" />
+                : <div class="grid aspect-[4/5] place-items-center font-display text-6xl text-royal" aria-hidden="true">{initials(d.name)}</div>}
+              <div class="absolute inset-x-0 bottom-0 h-1 origin-left scale-x-0 bg-gold transition-transform duration-500 group-hover:scale-x-100"></div>
+            </div>
+            <h2 class="mt-4 font-display text-2xl">{d.name}</h2>
+            <p class="font-semibold text-royal">{d.role}</p>
+            <p class="text-sm text-stone">{d.club}</p>
+          </li>
+        ))}
+      </ul>
+      <div class="reveal mt-16 rounded-3xl bg-white p-8 ring-1 ring-line md:flex md:items-center md:justify-between">
+        <p class="font-display text-2xl">Questions for the Board?</p>
+        <div class="mt-4 flex flex-wrap gap-3 md:mt-0">
+          <a href={`mailto:${org.email}`} class="btn btn-primary"><Icon name="mail" size={18} /> {org.email}</a>
+          <a href="/contact" class="btn btn-ghost">Contact form</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

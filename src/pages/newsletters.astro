@@ -1,0 +1,54 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import Form from '../components/Form.astro';
+import { documents } from '../lib/cms';
+const newsletters = documents.filter(d => d.kind === 'newsletter');
+const annualReports = documents.filter(d => d.kind === 'report');
+const ext = (h: string) => /^https?:/.test(h);
+const kindOf = (h: string) => /\.pdf$/i.test(h) ? 'PDF' : /\.docx?$/i.test(h) ? 'Word document' : /youtu/.test(h) ? 'Video' : 'Newsletter';
+const fmtD = (s: string) => new Date(s + 'T12:00:00').toLocaleDateString('en-CA', { month: 'long', day: 'numeric', year: 'numeric' });
+---
+<Layout title="Newsletters" overlay description="Rotary World Help newsletters and annual reports: loadings, arrivals, people and AGM results.">
+  <PageHero page="newsletters" eyebrow="Newsletters and reports" title="News from the warehouse, in your inbox."
+    lead="Read past newsletters and annual reports, or subscribe to hear about loadings, arrivals and events." />
+  <section class="py-20 md:py-28">
+    <div class="wrap grid gap-14 lg:grid-cols-[1.3fr_1fr]">
+      <div>
+        <h2 class="reveal font-display text-3xl">Newsletters</h2>
+        <ul class="mt-8 grid gap-4 sm:grid-cols-2">
+          {newsletters.map((n, i) => (
+            <li class="reveal" style={`--d:${i % 2}`}><a href={n.href} target="_blank" rel="noopener" class="group card-lift flex items-center gap-4 rounded-2xl bg-white p-5 ring-1 ring-line">
+              <span class="grid size-12 shrink-0 place-items-center rounded-xl bg-sky text-royal transition-colors group-hover:bg-royal group-hover:text-white"><Icon name="file" size={22} /></span>
+              <span><span class="block font-display text-xl">{n.title}</span><span class="text-sm text-stone">{n.note || `${kindOf(n.href)} newsletter`}</span></span>
+              <Icon name="arrow-up-right" size={18} class="ml-auto text-royal transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </a></li>
+          ))}
+        </ul>
+        <h2 class="reveal mt-16 font-display text-3xl">Annual reports and AGMs</h2>
+        <ul class="mt-8 divide-y divide-line rounded-3xl bg-white ring-1 ring-line">
+          {annualReports.map(r => (
+            <li><a href={r.href} target={ext(r.href) || r.href.startsWith('/docs/') ? '_blank' : undefined} rel={ext(r.href) ? 'noopener' : undefined} class="group flex items-center justify-between gap-4 px-6 py-5 hover:bg-paper transition-colors">
+              <span><span class="block font-semibold">{r.title}</span><span class="text-sm text-stone">{r.note || fmtD(r.date)}</span></span>
+              <Icon name={ext(r.href) ? 'arrow-up-right' : 'arrow'} size={18} class="text-royal transition-transform group-hover:translate-x-1" />
+            </a></li>
+          ))}
+        </ul>
+      </div>
+      <aside class="lg:sticky lg:top-28 lg:self-start">
+        <div class="reveal rounded-3xl bg-ink p-7 text-white on-dark">
+          <h2 class="font-display text-2xl">Subscribe</h2>
+          <p class="mt-1 text-sm text-white/70">Stay up to date on loadings, arrivals and events.</p>
+          <Form kind="subscribe" class="mt-5" dark>
+            <label for="nl-name" class="field-label !text-white/80">Name</label>
+            <input id="nl-name" name="name" autocomplete="name" class="input" />
+            <label for="nl-email" class="field-label mt-3 !text-white/80">Email address <span aria-hidden="true">*</span></label>
+            <input id="nl-email" name="email" type="email" required autocomplete="email" class="input" />
+            <button type="submit" class="btn btn-donate mt-5 w-full">Subscribe</button>
+          </Form>
+        </div>
+      </aside>
+    </div>
+  </section>
+</Layout>

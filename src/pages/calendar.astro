@@ -1,0 +1,36 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { org } from '../data/site';
+import { events as all } from '../lib/cms';
+const events = all.map(e => ({ ...e, text: e.description, href: e.link }));
+const d = (s: string) => new Date(s + 'T12:00:00');
+---
+<Layout title="Calendar" overlay description="Rotary World Help events: container loadings at the Coquitlam warehouse and Annual General Meetings.">
+  <PageHero page="calendar" eyebrow="Calendar" title="Loadings, meetings and events."
+    lead="Loading days are the best way to see Rotary World Help in action. Loading dates depend on goods being available and on shipping bookings, so please confirm with us before you come." />
+  <section class="py-20 md:py-28">
+    <div class="wrap max-w-4xl">
+      <ol class="grid gap-5">
+        {events.map((e, i) => (
+          <li class="reveal" style={`--d:${i}`}>
+            <div class="card-lift flex gap-6 rounded-3xl bg-white p-6 ring-1 ring-line md:p-8">
+              <div class="grid w-20 shrink-0 place-items-center rounded-2xl bg-ink py-3 text-center text-white on-dark">
+                <span class="text-xs font-bold uppercase tracking-wider text-gold">{d(e.date).toLocaleDateString('en-CA', { month: 'short' })}</span>
+                <span class="font-display text-4xl leading-none tabular">{d(e.date).getDate()}</span>
+                <span class="text-xs text-white/60 tabular">{d(e.date).getFullYear()}</span>
+              </div>
+              <div>
+                <h2 class="font-display text-2xl">{e.title}</h2>
+                <p class="mt-1 text-stone">{e.text}{e.time && <> Starts at {e.time}.</>}</p>
+                {e.href && <a href={e.href} class="link-arrow mt-3 text-sm">Read more <Icon name="arrow" size={16} /></a>}
+              </div>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <p class="reveal mt-10 text-stone">Want to volunteer at a loading? Email <a href={`mailto:${org.email}`} class="u-link font-semibold text-royal">{org.email}</a> or call <a href={org.phoneHref} class="u-link font-semibold text-royal">{org.phone}</a>.</p>
+    </div>
+  </section>
+</Layout>

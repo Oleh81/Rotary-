@@ -1,0 +1,131 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import Img from '../components/Img.astro';
+import { img } from '../lib/img';
+import { shipments, archive } from '../data/site';
+import { albumFor, photos, total, extraAlbums, cover, albumName, fmtAlbumDate } from '../lib/albums';
+const SHOW = 9;
+const yrs = [...new Set(extraAlbums.map(a => a.date.slice(0, 4)))].sort();
+const albumYears = yrs.length > 1 ? `${yrs[0]} to ${yrs[yrs.length - 1]}` : yrs[0];
+const pool = (s: (typeof shipments)[number]) => { const a = albumFor(s.date, s.country); return a ? photos(a).slice(SHOW, SHOW + 48).map(p => ({ s: p.src, ss: p.srcset, l: p.large })) : []; };
+const fmt = (d: string) => new Date(d + 'T12:00:00').toLocaleDateString('en-CA', { month: 'long', day: 'numeric', year: 'numeric' });
+const byYear = shipments.reduce((acc, s) => { (acc[s.date.slice(0, 4)] ||= []).push(s); return acc; }, {} as Record<string, typeof shipments>);
+const years = Object.keys(byYear).sort().reverse();
+---
+<Layout title="Gallery" overlay description="Photos of every recent Rotary World Help container loading in Coquitlam, 2024 to 2026, plus a record of earlier shipments.">
+  <PageHero page="gallery" eyebrow="Gallery" title="Every container, loaded by hand." img="1919"
+    lead={`${shipments.length} recent loadings and ${extraAlbums.length} albums from ${albumYears}, with the volunteers and sponsors who made them happen. Tap any photo to enlarge it, or open a loading to see every photo.`}>
+    <nav aria-label="Years" class="fade-up mt-8 flex flex-wrap gap-2" style="--delay:.8s">
+      {[...years, 'Albums', 'Earlier'].map(y => <a href={y === 'Albums' ? '#albums' : `#y-${y}`} class="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold ring-1 ring-white/20 hover:bg-white hover:text-ink transition-colors">{y}</a>)}
+    </nav>
+  </PageHero>
+
+  {years.map(y => (
+    <section id={`y-${y}`} class="py-16 md:py-20 scroll-mt-20 odd:bg-sand/50" aria-labelledby={`yh-${y}`}>
+      <div class="wrap">
+        <h2 id={`yh-${y}`} class="reveal font-display text-[clamp(3rem,8vw,6rem)] leading-none text-royal/90 tabular">{y}</h2>
+        <div class="mt-10 grid gap-14">
+          {byYear[y].map(s => (
+            <article id={`s-${s.date}`} class="scroll-mt-24" aria-labelledby={`h-${s.date}`}>
+              <header class="reveal flex flex-wrap items-baseline justify-between gap-2 border-b border-line pb-4">
+                <h3 id={`h-${s.date}`} class="font-display text-2xl md:text-3xl">{s.country} <span class="text-stone font-sans text-base font-semibold">· {fmt(s.date)}</span></h3>
+                <p class="text-sm text-stone">{s.sponsor && `Sponsored by ${s.sponsor} · `}{total(albumFor(s.date, s.country))} photos{albumFor(s.date, s.country).videos.length ? ` · ${albumFor(s.date, s.country).videos.length} videos` : ''}</p>
+              </header>
+              <ul class="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6" data-swap={JSON.stringify(pool(s))}>
+                {s.photos.slice(0, SHOW).map((id, i) => (
+                  <li class={`reveal-scale ${i === 0 ? 'col-span-2 row-span-2' : ''}`} style={`--d:${i % 4}`}>
+                    <a href={img(id)?.large} data-lightbox={s.date} data-caption={`${s.country}, ${fmt(s.date)}`} data-alt={`Container loading for ${s.country}, photo ${i + 1}`}
+                      class="group relative block h-full overflow-hidden rounded-2xl bg-sand">
+                      <Img id={id} alt={`Container loading for ${s.country}, photo ${i + 1}`} class="h-full w-full aspect-square object-cover transition-transform duration-700 ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-105" sizes={i === 0 ? '(min-width:1024px) 32vw, 66vw' : '(min-width:1024px) 16vw, 33vw'} />
+                      <span class="absolute inset-0 bg-ink/0 transition-colors group-hover:bg-ink/15"></span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              <a href={`/gallery/${albumFor(s.date, s.country).slug}`} class="reveal mt-4 inline-flex min-h-11 items-center gap-2 rounded-full bg-royal px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-ink">
+                See all {total(albumFor(s.date, s.country))} photos{albumFor(s.date, s.country).videos.length ? ` and ${albumFor(s.date, s.country).videos.length} videos` : ''} <Icon name="arrow" size={16} />
+              </a>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <section id="albums" class="py-16 md:py-20 scroll-mt-20" aria-labelledby="alb-t">
+    <div class="wrap">
+      <p class="eyebrow reveal">Full photo albums</p>
+      <h2 id="alb-t" class="reveal mt-3 font-display text-[clamp(1.9rem,4vw,3.2rem)] leading-tight" style="--d:1">{albumYears}: the photo archive</h2>
+      <p class="reveal mt-3 max-w-2xl text-stone" style="--d:2">{extraAlbums.length} more albums with {extraAlbums.reduce((n, a) => n + total(a), 0).toLocaleString('en-CA')} photos and {extraAlbums.reduce((n, a) => n + a.videos.length, 0).toLocaleString('en-CA')} short videos: loadings, deliveries and stories from the photo galleries of our previous website and the albums Rotary World Help shared on Google Drive.</p>
+      <ul class="mt-10 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+        {extraAlbums.map((a, k) => (
+          <li class="reveal" style={`--d:${k % 4}`}><a href={`/gallery/${a.slug}`} class="group card-lift block overflow-hidden rounded-3xl bg-white ring-1 ring-line">
+            <div class="relative aspect-[4/3] overflow-hidden bg-sand"><img src={cover(a)?.src} alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <span class="absolute bottom-2 left-2 rounded-full bg-ink/80 px-2.5 py-1 text-[11px] sm:bottom-3 sm:left-3 sm:px-3 sm:text-xs font-semibold text-white backdrop-blur-sm">{total(a)} photos{a.videos.length ? ` · ${a.videos.length} videos` : ''}</span></div>
+            <div class="p-3 sm:p-5"><span class="block font-display text-base leading-snug sm:text-xl group-hover:text-royal transition-colors">{albumName(a)}</span><span class="text-xs sm:text-sm text-stone">{fmtAlbumDate(a.date)}</span></div>
+          </a></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section id="y-Earlier" class="bg-ink py-20 md:py-28 text-white on-dark scroll-mt-20" aria-labelledby="arch">
+    <div class="wrap">
+      <p class="eyebrow">Photo archive</p>
+      <h2 id="arch" class="mt-4 font-display text-[clamp(1.9rem,4vw,3.2rem)] leading-tight">Earlier loadings</h2>
+      <p class="mt-3 max-w-2xl text-white/70">Every loading listed on our previous website. The ones with photos have a full album above.</p>
+      <div class="mt-10 grid gap-6 lg:grid-cols-3">
+        {archive.map(a => (
+          <details class="group rounded-3xl bg-white/5 p-6 ring-1 ring-white/10 open:bg-white/10" open={a.year === '2023'}>
+            <summary class="flex cursor-pointer list-none items-center justify-between font-display text-3xl">{a.year}<span class="text-sm font-sans text-white/60">{a.items.length} loadings <Icon name="chevron" size={16} class="inline transition-transform group-open:rotate-180" /></span></summary>
+            <ul class="mt-4 space-y-2 text-white/80">{a.items.map(t => <li class="flex gap-2"><Icon name="ship" size={16} class="mt-1 shrink-0 text-gold" />{t}</li>)}</ul>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  // Living grid: now and then one photo on screen fades into another photo from the same loading.
+  type P = { s: string; ss?: string; l: string };
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const grids = [...document.querySelectorAll<HTMLElement>('[data-swap]')].map(g => ({ g, pool: JSON.parse(g.dataset.swap || '[]') as P[] })).filter(x => x.pool.length);
+    const seen = new Set<HTMLElement>();
+    const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting ? seen.add(e.target as HTMLElement) : seen.delete(e.target as HTMLElement)), { threshold: 0.3 });
+    grids.forEach(x => io.observe(x.g));
+    let lastTile: Element | null = null;
+    const tick = () => {
+      if (document.hidden) return;
+      const live = grids.filter(x => seen.has(x.g) && !x.g.matches(':hover, :focus-within'));
+      if (!live.length) return;
+      const x = live[Math.floor(Math.random() * live.length)];
+      const tiles = [...x.g.querySelectorAll<HTMLAnchorElement>('a[data-lightbox]')].filter(t => t !== lastTile);
+      const a = tiles[Math.floor(Math.random() * tiles.length)];
+      const base = a?.querySelector('img'); if (!base || a.querySelector('.swap-in')) return;
+      lastTile = a;
+      const next = x.pool.shift()!;
+      const nu = new Image();
+      nu.decoding = 'async'; nu.referrerPolicy = 'no-referrer'; nu.alt = base.alt; nu.sizes = base.sizes;
+      if (next.ss) nu.srcset = next.ss; nu.src = next.s;
+      nu.className = base.className + ' swap-in absolute inset-0';
+      nu.onerror = () => { nu.remove(); };
+      nu.decode().then(() => {
+        a.prepend(nu);
+        requestAnimationFrame(() => requestAnimationFrame(() => nu.classList.add('is-in')));
+        setTimeout(() => {
+          x.pool.push({ s: base.currentSrc || base.src, ss: base.srcset, l: a.href });
+          base.replaceWith(nu); nu.classList.remove('swap-in', 'absolute', 'inset-0', 'is-in'); a.href = next.l;
+        }, 1400);
+      }).catch(() => {});
+    };
+    if (grids.length) setInterval(tick, 2600);
+  }
+</script>
+
+<style is:global>
+  .swap-in { opacity: 0; transition: opacity 1.3s var(--ease-soft, ease); z-index: 1; }
+  .swap-in.is-in { opacity: 1; }
+</style>

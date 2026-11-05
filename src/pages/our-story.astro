@@ -1,0 +1,122 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import Img from '../components/Img.astro';
+import { milestones, awards, sponsors, stats, STORY_YOUTUBE, DONATE_URL } from '../data/site';
+---
+<Layout title="Our Story" overlay description="How Rotary World Help began in 1992 with a visit to a Kyiv hospital, and grew into 482 containers of medical and educational equipment shipped to 65 countries.">
+  <PageHero page="our-story" eyebrow="Our story" title="It started with one stethoscope shared by eight doctors." img="1729"
+    lead="Established in 1993 and sanctioned by Rotary International in September 1997, Rotary World Help provides medical and educational supplies to communities in need." />
+
+  <section class="py-20 md:py-28" aria-labelledby="about">
+    <div class="wrap grid gap-12 lg:grid-cols-[1fr_1fr]">
+      <div>
+        <p class="eyebrow reveal">About us</p>
+        <h2 id="about" class="reveal mt-4 font-display text-[clamp(1.9rem,4vw,3.2rem)] leading-tight" style="--d:1">The biggest Rotary project no one has heard about.</h2>
+      </div>
+      <div class="prose-rwh reveal" style="--d:2">
+        <p>It all started in 1992, when District 5040 sent a delegation of Rotarians to the former Soviet Union to help establish the first Rotary club in Kyiv, Ukraine. The delegates saw the state of the medical facilities and decided to find a way to help.</p>
+        <p>In 1993, the late Ted Segodnia, together with fellow Vancouver club Rotarians Bill Richwa and Ralph Towsley, organized the first shipment of medical supplies and equipment to Kyiv. Bill, Ted and their wives went to Kyiv to oversee the distribution. When they returned home, they found more supplies waiting for them, so they convinced the Vancouver club to carry on the project as an international service project.</p>
+        <p>By 1997, Bill and Ralph realized the project was becoming too big for one club. The Rotary Clubs of the Lower Mainland of British Columbia World Help Network was sanctioned by Rotary International, incorporated as a society in BC and registered as a charity. Its members were not individual Rotarians but Rotary clubs: seven joined at first, each paying $10 per club member to help cover administration costs.</p>
+        <p>We began by sending medical supplies to hospitals that had been built but could not fully operate for lack of equipment. Medical supplies remain our main focus, but today we also ship dental and optical, educational and sports equipment, and disaster relief supplies.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-sand/60 py-20 md:py-28" aria-labelledby="timeline">
+    <div class="wrap">
+      <p class="eyebrow reveal">Milestones</p>
+      <h2 id="timeline" class="reveal mt-4 font-display text-[clamp(1.9rem,4vw,3.2rem)] leading-tight" style="--d:1">Three decades, one container at a time.</h2>
+      <ol class="relative mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {milestones.map((m, i) => (
+          <li class="reveal spot card-lift rounded-3xl bg-white p-7 ring-1 ring-line" style={`--d:${i % 3}`}>
+            <span class="font-display text-5xl text-royal tabular">{m.year}</span>
+            <h3 class="mt-4 font-display text-2xl">{m.title}</h3>
+            <p class="mt-2 text-stone leading-relaxed">{m.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="py-20 md:py-28" aria-labelledby="ops">
+    <div class="wrap grid gap-12 lg:grid-cols-2 lg:items-center">
+      <div class="clip-in overflow-hidden rounded-[1.5rem]"><Img id="1436" alt="Volunteers at the Rotary World Help warehouse in Coquitlam" class="aspect-[4/3] w-full object-cover" sizes="(min-width:1024px) 45vw, 100vw" /></div>
+      <div>
+        <p class="eyebrow reveal">Our location and operations</p>
+        <h2 id="ops" class="reveal mt-4 font-display text-[clamp(1.9rem,4vw,3.2rem)] leading-tight" style="--d:1">Run by volunteers on the Riverview grounds in Coquitlam.</h2>
+        <p class="reveal mt-6 text-lg text-stone leading-relaxed" style="--d:2">Our members and volunteers coordinate large-scale humanitarian aid projects from our warehouse at the Riverview site. The Board holds an average of ten meetings a year to plan and carry out our work.</p>
+        <ul class="mt-8 grid gap-3 sm:grid-cols-2">
+          {['Wholly volunteer operated, with no paid employees', 'No government funding', 'Non-religious and non-political', 'Containers are sealed until opened by the receiver'].map((t, i) => (
+            <li class="reveal flex gap-3 rounded-2xl bg-white p-4 ring-1 ring-line" style={`--d:${i}`}><Icon name="check" size={20} class="mt-0.5 shrink-0 text-royal" /><span>{t}</span></li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-ink py-20 md:py-28 text-white on-dark" aria-labelledby="video">
+    <div class="wrap grid gap-10 lg:grid-cols-[.8fr_1.2fr] lg:items-center">
+      <div>
+        <p class="eyebrow reveal">Watch</p>
+        <h2 id="video" class="reveal mt-4 font-display text-[clamp(1.9rem,4vw,3.2rem)] leading-tight" style="--d:1">The Rotary World Help story (2018)</h2>
+        <p class="reveal mt-5 text-white/75 leading-relaxed" style="--d:2">How RWH began, how it operates, our volunteers, and how RWH affects people in the recipient countries. The figures in the video are from 2018; today we have shipped {stats.containers} containers to {stats.countries} countries.</p>
+        <a href="/docs/Rotary-World-Help-Story.pdf" class="reveal btn btn-ghost mt-8" style="--d:3" download><Icon name="download" size={18} /> Rotary World Help Story (PDF)</a>
+      </div>
+      <div class="reveal-scale relative aspect-video overflow-hidden rounded-3xl bg-black" data-yt={STORY_YOUTUBE}>
+        <img src={`/media/video/yt-story.webp`} alt="" class="absolute inset-0 h-full w-full object-cover opacity-80" loading="lazy" width="1280" height="720" />
+        <a href={`https://www.youtube.com/watch?v=${STORY_YOUTUBE}`} target="_blank" rel="noopener" class="yt-play absolute inset-0 grid place-items-center" aria-label="Play the Rotary World Help story video (YouTube)">
+          <span class="grid size-20 place-items-center rounded-full bg-white text-ink shadow-2xl transition-transform duration-500 hover:scale-110"><Icon name="play" size={30} /></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="awards" class="py-20 md:py-28 scroll-mt-20" aria-labelledby="awards-t">
+    <div class="wrap">
+      <p class="eyebrow reveal">Our awards</p>
+      <h2 id="awards-t" class="reveal mt-4 font-display text-[clamp(1.9rem,4vw,3.2rem)] leading-tight" style="--d:1">Recognized for service above self.</h2>
+      <div class="reveal mt-12 grid gap-8 rounded-[2rem] bg-ink p-8 text-white on-dark md:grid-cols-[auto_1fr] md:items-center md:p-12">
+        <div class="mx-auto w-44 rounded-2xl bg-white p-3"><Img id={awards.macrae.img} alt="The Donald MacRae Peace Award" class="w-full" sizes="11rem" /></div>
+        <div>
+          <h3 class="font-display text-3xl">{awards.macrae.title}</h3>
+          <p class="mt-3 text-white/80 leading-relaxed">{awards.macrae.text}</p>
+        </div>
+      </div>
+      <h3 class="reveal mt-20 font-display text-3xl">The Ralphie Award</h3>
+      <p class="reveal mt-3 max-w-3xl text-stone leading-relaxed">{awards.ralphieIntro}</p>
+      <ul class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {awards.ralphies.map((r, i) => (
+          <li class="reveal group card-lift overflow-hidden rounded-3xl bg-white ring-1 ring-line" style={`--d:${i % 4}`}>
+            {r.img ? <div class="overflow-hidden"><Img id={r.img} alt={`${r.name}, Ralphie Award ${r.year}`} class="aspect-[4/5] w-full object-cover" sizes="(min-width:1024px) 22vw, 50vw" /></div>
+              : <div class="grid aspect-[4/5] place-items-center bg-sky text-royal"><Icon name="award" size={56} /></div>}
+            <div class="p-5">
+              <p class="text-xs font-bold uppercase tracking-wider text-royal">{r.year} Ralphie</p>
+              <p class="mt-1 font-display text-xl leading-snug">{r.name}</p>
+              {r.text && <p class="mt-2 text-sm text-stone leading-relaxed">{r.text}</p>}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="bg-sand/60 py-20" aria-labelledby="sponsors">
+    <div class="wrap">
+      <h2 id="sponsors" class="reveal font-display text-3xl">Our sponsors</h2>
+      <p class="reveal mt-2 text-stone">We thank all of our many partners. Please support them if you can.</p>
+      <ul class="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+        {sponsors.map((s, i) => (
+          <li class="reveal grid h-32 place-items-center rounded-2xl bg-white p-5 ring-1 ring-line" style={`--d:${i}`}>
+            {s.img ? <Img id={s.img} alt={s.name} class="max-h-20 w-auto object-contain" sizes="12rem" /> : <span class="font-display text-xl text-center">{s.name}</span>}
+          </li>
+        ))}
+      </ul>
+      <div class="mt-12 flex flex-wrap gap-3">
+        <a href={DONATE_URL} target="_blank" rel="noopener" class="btn btn-donate shimmer" data-magnetic><Icon name="heart" size={18} /> Donate</a>
+        <a href="/join" class="btn btn-primary">Bring your club on board <Icon name="arrow" size={18} class="arrow" /></a>
+      </div>
+    </div>
+  </section>
+</Layout>

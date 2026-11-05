@@ -1,0 +1,96 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Icon from '../../components/Icon.astro';
+import { albums, photos, total, lh3, fmtAlbumDate, albumName } from '../../lib/albums';
+import { countryHref } from '../../lib/countries';
+import { countries } from '../../data/site';
+
+export function getStaticPaths() { return albums.map((a, i) => ({ params: { slug: a.slug }, props: { i } })); }
+const { i } = Astro.props as { i: number };
+const a = albums[i];
+const newer = albums[i - 1], older = albums[i + 1];
+const list = photos(a);
+const n = total(a);
+const when = fmtAlbumDate(a.date);
+const name = albumName(a);
+const isArchive = a.kind === 'archive';
+const hasCountry = countries.some(c => c.name === a.country);
+const plural = (k: number, w: string) => `${k} ${w}${k === 1 ? '' : 's'}`;
+const coverSrc = list[0]?.large;
+---
+<Layout title={isArchive ? `${name}, ${when}: photos` : `${a.country}, ${when}: container loading photos`} overlay
+  description={(isArchive ? `${plural(n, 'photo')} from the Rotary World Help photo archive: ${name}, ${when}.` : `All ${plural(n, 'photo')}${a.videos.length ? ` and ${plural(a.videos.length, 'video')}` : ''} of the Rotary World Help container loaded in Coquitlam, BC for ${a.country} on ${when}.`).slice(0, 158)}
+  image={list[0]?.local ? coverSrc : undefined}>
+  <section class="relative isolate overflow-hidden bg-ink pt-[72px] text-white on-dark grain">
+    {coverSrc && <img src={list[0].src} srcset={list[0].srcset} sizes="100vw" alt="" class="absolute inset-0 -z-20 h-full w-full object-cover opacity-35 kenburns" />}
+    <div class="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(10,27,51,.6),rgba(10,27,51,.95))]"></div>
+    <div class="wrap py-16 md:py-24">
+      <a href="/gallery" class="link-arrow fade-up text-sm !text-white/80"><Icon name="chevron-left" size={16} /> All loadings</a>
+      <p class="eyebrow fade-up mt-8" style="--delay:.1s">{isArchive ? 'Photo archive' : 'Container loading'} · {when}</p>
+      <h1 class="fade-up mt-3 font-display text-[clamp(2.6rem,6vw,5rem)] leading-[1.02] tracking-tight" style="--delay:.2s">{name}</h1>
+      {a.sponsor && <p class="fade-up mt-4 max-w-2xl text-lg text-white/80" style="--delay:.3s">Sponsored by {a.sponsor}</p>}
+      {a.story && <div class="fade-up mt-5 max-w-2xl space-y-3 text-white/85 leading-relaxed" style="--delay:.35s">{a.story.split(/\n\s*\n|\n/).filter(Boolean).map(t => <p>{t}</p>)}</div>}
+      <p class="fade-up mt-6 flex flex-wrap items-baseline gap-x-6 gap-y-2" style="--delay:.4s">
+        <span><span class="font-display text-5xl text-gold tabular">{n}</span> <span class="text-white/80">{n === 1 ? 'photo' : 'photos'}</span></span>
+        {a.videos.length > 0 && <span><span class="font-display text-5xl text-gold tabular">{a.videos.length}</span> <span class="text-white/80">{a.videos.length === 1 ? 'video' : 'videos'}</span></span>}
+      </p>
+      <div class="fade-up mt-8 flex flex-wrap gap-3" style="--delay:.5s">
+        {hasCountry && <a href={countryHref(a.country)} class="btn btn-ghost">More about {a.country} <Icon name="arrow" size={18} class="arrow" /></a>}
+        {a.folder && <a href={a.folder} target="_blank" rel="noopener" class="btn btn-ghost">Original folder on Google Drive <Icon name="arrow-up-right" size={18} /></a>}
+      </div>
+    </div>
+  </section>
+
+  <section class="py-14 md:py-20" aria-labelledby="ph-t">
+    <div class="wrap">
+      <h2 id="ph-t" class="sr-only">Photos</h2>
+      <ul class="columns-2 gap-2 sm:columns-3 lg:columns-4 xl:columns-5 [&>li]:mb-2">
+        {list.map((p, k) => (
+          <li class="break-inside-avoid">
+            <a href={p.large} data-lightbox="album" data-caption={`${name}, ${when}`} data-alt={`${isArchive ? name : `Container loading for ${a.country}`}, photo ${k + 1} of ${n}`}
+              class="group block overflow-hidden rounded-xl bg-sand">
+              <img src={p.src} srcset={p.srcset} sizes="(min-width:1280px) 19vw, (min-width:1024px) 24vw, (min-width:640px) 32vw, 48vw"
+                width={p.w ?? 480} height={p.h ?? 360} loading={k < 8 ? 'eager' : 'lazy'} decoding="async" referrerpolicy="no-referrer"
+                alt={`${isArchive ? name : `Container loading for ${a.country}`}, photo ${k + 1} of ${n}`}
+                class="album-img block h-auto w-full transition-transform duration-700 group-hover:scale-[1.03]" />
+            </a>
+          </li>
+        ))}
+      </ul>
+      {a.drivePhotos.length > 0 && <p class="mt-6 text-sm text-stone">{a.local.length ? `The first ${a.local.length} photos are from our gallery; the rest` : 'These photos'} are shown from the album shared on Google Drive.</p>}
+    </div>
+  </section>
+
+  {a.videos.length > 0 && (
+    <section class="bg-sand/60 py-14 md:py-20" aria-labelledby="vd-t">
+      <div class="wrap">
+        <h2 id="vd-t" class="font-display text-[clamp(1.9rem,4vw,3rem)] leading-tight">Videos from the loading</h2>
+        <p class="mt-2 text-stone">{plural(a.videos.length, 'short clip')} filmed on the day. Each opens on Google Drive in a new tab.</p>
+        <ul class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          {a.videos.map((v, k) => (
+            <li><a href={`https://drive.google.com/file/d/${v}/view`} target="_blank" rel="noopener" class="group relative block aspect-video overflow-hidden rounded-xl bg-ink"
+              aria-label={`Video ${k + 1} of ${a.videos.length} (opens Google Drive in a new tab)`}>
+              <img src={lh3(v, 480)} alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" class="album-img h-full w-full object-cover opacity-85 transition-opacity group-hover:opacity-100" />
+              <span class="absolute inset-0 grid place-items-center"><span class="grid size-11 place-items-center rounded-full bg-white/90 text-ink shadow-lg transition-transform group-hover:scale-110"><Icon name="play" size={18} /></span></span>
+            </a></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <section class="py-14">
+    <nav class="wrap flex flex-wrap justify-between gap-4" aria-label="More loadings">
+      {older ? <a href={`/gallery/${older.slug}`} class="link-arrow"><Icon name="chevron-left" size={16} /> {albumName(older)}, {fmtAlbumDate(older.date)}</a> : <span></span>}
+      {newer && <a href={`/gallery/${newer.slug}`} class="link-arrow">{albumName(newer)}, {fmtAlbumDate(newer.date)} <Icon name="arrow" size={16} /></a>}
+    </nav>
+  </section>
+</Layout>
+
+<script>
+  // A Drive photo that fails to load (file removed or made private) disappears instead of leaving a broken tile.
+  document.querySelectorAll<HTMLImageElement>('img.album-img').forEach(im => {
+    const drop = () => im.closest('li')?.remove();
+    if (im.complete && im.naturalWidth === 0 && im.src) drop(); else im.addEventListener('error', drop, { once: true });
+  });
+</script>

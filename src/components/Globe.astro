@@ -1,0 +1,123 @@
+---
+// Slowly turning globe: each country Rotary World Help has shipped to lights up in gold as it turns to face the viewer.
+// WebGL (cobe, ~6 kB) loads only when the globe scrolls into view; it pauses off-screen and in a hidden tab.
+// Reduced motion: no turning, every country shown lit. No WebGL: the block hides itself.
+import { countries, COQUITLAM } from '../data/site';
+import { countrySlug } from '../lib/countries';
+
+interface Props { class?: string }
+const { class: cls = '' } = Astro.props;
+const data = countries.map(c => ({ n: c.name.replace(/\s*\(.*\)/, ''), c: c.count, lo: c.lon, la: c.lat, s: countrySlug(c.name) }));
+const home = [COQUITLAM.lat, COQUITLAM.lon];
+---
+<figure class:list={['globe-wrap relative mx-auto aspect-square w-full max-w-[34rem]', cls]} data-globe={JSON.stringify(data)} data-home={JSON.stringify(home)}>
+  <div class="globe-ring absolute inset-[7%] rounded-full" aria-hidden="true"></div>
+  <canvas class="globe-canvas absolute inset-0 h-full w-full" role="img"
+    aria-label={`A turning globe. The ${countries.length} countries that have received Rotary World Help containers light up in gold as they come into view.`}></canvas>
+  <figcaption class="globe-cap absolute inset-x-0 -bottom-2 flex justify-center" aria-hidden="true">
+    <a href="/countries" tabindex="-1" class="globe-now inline-flex min-h-10 items-center gap-2 rounded-full bg-ink/80 px-4 py-2 text-sm text-white ring-1 ring-white/15 backdrop-blur-sm">
+      <span class="size-2 rounded-full bg-gold"></span><span data-globe-name>Coquitlam, BC</span><span class="text-gold tabular" data-globe-count></span>
+    </a>
+  </figcaption>
+</figure>
+
+<script>
+  type C = { n: string; c: number; lo: number; la: number; s: string };
+  const RAD = Math.PI / 180;
+  const wrap180 = (d: number) => ((((d + 180) % 360) + 360) % 360) - 180;
+
+  async function start(el: HTMLElement) {
+    const list: C[] = JSON.parse(el.dataset.globe || '[]');
+    const home = JSON.parse(el.dataset.home || '[49.28,-122.8]') as [number, number];
+    const canvas = el.querySelector('canvas') as HTMLCanvasElement;
+    const nameEl = el.querySelector('[data-globe-name]') as HTMLElement;
+    const countEl = el.querySelector('[data-globe-count]') as HTMLElement;
+    const link = el.querySelector('.globe-now') as HTMLAnchorElement;
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let createGlobe: typeof import('cobe').default;
+    try { createGlobe = (await import('cobe')).default; } catch { el.hidden = true; return; }
+
+    const maxC = Math.max(...list.map(c => c.c));
+    const full = list.map(c => 0.045 + 0.065 * Math.sqrt(c.c / maxC));
+    const lit = list.map(() => (still ? 1 : 0));       // 0..1 light per country
+    const seen = list.map(() => false);                // has it lit on this turn
+    // Phi puts Kenya-side first in view; theta tilts the north toward us (most countries are north of the equator).
+    let phi = 4.4, last = performance.now();
+    const theta = 0.28;
+    const SPEED = 0.085;                               // rad per second: one turn in about 74 s
+    const dpr = Math.min(2, devicePixelRatio || 1);
+    let width = 0;                                     // canvas buffer pixels = CSS width x dpr
+    const size = () => { width = Math.round(canvas.offsetWidth * dpr); };
+    size();
+
+    const show = (c: C) => {
+      nameEl.textContent = c.n;
+      countEl.textContent = `${c.c} ${c.c === 1 ? 'container' : 'containers'}`;
+      link.href = `/countries/${c.s}`;
+      link.classList.remove('is-new'); void link.offsetWidth; link.classList.add('is-new');
+    };
+
+    let globe: ReturnType<typeof createGlobe>;
+    try {
+      globe = createGlobe(canvas, {
+        devicePixelRatio: dpr,
+        width, height: width,
+        phi, theta, dark: 1, diffuse: 1.4, scale: 1,
+        mapSamples: 16000, mapBrightness: 8, mapBaseBrightness: 0.04,
+        baseColor: [0.16, 0.33, 0.62], markerColor: [0.97, 0.66, 0.11], glowColor: [0.12, 0.38, 0.78],
+        markers: [],
+        onRender: (state) => {
+          const now = performance.now();
+          const dt = Math.min(0.1, (now - last) / 1000); last = now;
+          if (!still) phi += SPEED * dt;
+          // Longitude facing the viewer for this phi (cobe's convention).
+          const front = 270 - (phi / RAD);
+          let pick: C | null = null, best = 999;          // name the newly lit country nearest the centre
+          list.forEach((c, i) => {
+            const rel = wrap180(c.lo - front);           // < 0: still coming round from the left
+            if (rel > -12 && rel < 95) {
+              if (!seen[i]) { seen[i] = true; if (Math.abs(rel) < best) { best = Math.abs(rel); pick = c; } }
+              lit[i] = Math.min(1, lit[i] + dt * 1.6);
+            } else if (rel <= -95 || rel >= 95) { seen[i] = false; if (!still) lit[i] = 0; }
+          });
+          if (pick && !still) show(pick);
+          state.phi = phi;
+          state.width = width; state.height = width;
+          state.markers = [
+            { location: home, size: 0.05 },
+            ...list.map((c, i) => {
+              const t = lit[i];
+              const pop = t < 1 ? 1 + Math.sin(t * Math.PI) * 0.6 : 1;   // a soft swell as it lights
+              return { location: [c.la, c.lo] as [number, number], size: t ? full[i] * t * pop : 0 };
+            }),
+          ];
+        },
+      });
+    } catch { el.hidden = true; return; }
+    canvas.style.opacity = '1';
+
+    let onScreen = true;
+    const run = () => globe.toggle(onScreen && !document.hidden);
+    new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; last = performance.now(); run(); }).observe(el);
+    document.addEventListener('visibilitychange', () => { last = performance.now(); run(); });
+    new ResizeObserver(size).observe(canvas);
+    if (still) { nameEl.textContent = `${list.length} countries`; countEl.textContent = ''; setTimeout(() => globe.toggle(false), 600); }
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-globe]').forEach(el => {
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { io.disconnect(); start(el); } }, { rootMargin: '300px' });
+    io.observe(el);
+  });
+</script>
+
+<style>
+  .globe-ring {
+    background: radial-gradient(closest-side, rgba(0,103,200,.28), rgba(0,103,200,.08) 70%, transparent 100%);
+    box-shadow: inset 0 0 0 2px rgba(247,168,27,.55), 0 0 0 1px rgba(247,168,27,.15), 0 0 80px -10px rgba(0,103,200,.6);
+  }
+  .globe-canvas { opacity: 0; transition: opacity 1.2s var(--ease-soft, ease); contain: layout paint size; }
+  .globe-now.is-new { animation: globe-cap .6s var(--ease-soft, ease); }
+  @keyframes globe-cap { from { opacity: .3; transform: translate3d(0, 4px, 0); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .globe-now.is-new { animation: none; } .globe-canvas { transition: none; } }
+</style>

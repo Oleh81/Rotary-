@@ -1,0 +1,24 @@
+---
+import Img from './Img.astro';
+import headlines from '../content/pages.json';
+// page: key in the admin's "Page headlines"; text saved there replaces the defaults written in the page.
+interface Props { page?: string; eyebrow: string; title: string; lead?: string; img?: string; imgPos?: string }
+const { page, eyebrow, img, imgPos = '50% 50%' } = Astro.props;
+const edited = page ? (headlines as Record<string, { title: string; lead: string }>)[page] : undefined;
+const title = edited?.title?.trim() || Astro.props.title;
+const lead = edited?.lead?.trim() || Astro.props.lead;
+const words = title.split(' ');
+---
+<section class="relative isolate overflow-hidden bg-ink text-white on-dark grain pt-[72px]">
+  {img && <Img id={img} alt="" eager class="absolute inset-0 -z-20 h-full w-full object-cover kenburns opacity-60" style={`object-position:${imgPos}`} sizes="100vw" />}
+  <div class="absolute inset-0 -z-10 bg-[linear-gradient(100deg,rgba(10,27,51,.96)_30%,rgba(10,27,51,.7)_65%,rgba(10,27,51,.45))]"></div>
+  <div class="absolute -right-32 -top-32 -z-10 size-[30rem] rounded-full bg-royal/50 blur-3xl" aria-hidden="true"></div>
+  <div class="wrap py-20 md:py-28">
+    <p class="eyebrow fade-up">{eyebrow}</p>
+    <h1 class="rise mt-4 font-display text-[clamp(2.4rem,6vw,5rem)] font-medium leading-[1.02] tracking-[-0.025em] max-w-[18ch]">
+      {words.map((w, i) => <span style={`--i:${i}`}>{w}&nbsp;</span>)}
+    </h1>
+    {lead && <p class="fade-up mt-6 max-w-2xl text-lg md:text-xl text-white/80 leading-relaxed" style="--delay:.6s">{lead}</p>}
+    <slot />
+  </div>
+</section>

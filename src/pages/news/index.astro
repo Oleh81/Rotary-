@@ -1,0 +1,41 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Icon from '../../components/Icon.astro';
+import Img from '../../components/Img.astro';
+import { news, excerpt } from '../../lib/cms';
+import { hasImg } from '../../lib/img';
+const fmt = (d: string) => new Date(d + 'T12:00:00').toLocaleDateString('en-CA', { month: 'long', day: 'numeric', year: 'numeric' });
+const [lead, ...rest] = news;
+---
+<Layout title="News" overlay description="News from Rotary World Help: container loadings and arrivals, AGMs, letters from recipients and media coverage.">
+  <PageHero page="news" eyebrow="News" title="Stories from the warehouse and the field." />
+  <section class="py-16 md:py-24">
+    <div class="wrap">
+      <a href={`/news/${lead.slug}`} class="reveal group grid overflow-hidden rounded-[2rem] bg-white ring-1 ring-line md:grid-cols-2 card-lift">
+        <div class="overflow-hidden">{hasImg(lead.image) && <Img id={lead.image} alt="" eager class="h-full min-h-72 w-full object-cover transition-transform duration-1000 group-hover:scale-105" sizes="(min-width:768px) 50vw, 100vw" />}</div>
+        <div class="flex flex-col justify-center p-8 md:p-12">
+          <time datetime={lead.date} class="text-xs font-bold uppercase tracking-wider text-royal">{fmt(lead.date)}</time>
+          <h2 class="mt-3 font-display text-3xl md:text-4xl leading-tight group-hover:text-royal transition-colors">{lead.title}</h2>
+          <p class="mt-3 text-stone">{excerpt(lead, 170)}</p>
+          <span class="mt-6 inline-flex items-center gap-2 font-semibold text-royal">Read the story <Icon name="arrow" size={18} class="transition-transform group-hover:translate-x-1" /></span>
+        </div>
+      </a>
+      <ul class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {rest.map((n, i) => (
+          <li class="reveal" style={`--d:${i % 3}`}>
+            <a href={`/news/${n.slug}`} class="group card-lift flex h-full flex-col overflow-hidden rounded-3xl bg-white ring-1 ring-line">
+              {hasImg(n.image) ? <div class="overflow-hidden"><Img id={n.image} alt="" class="aspect-[16/10] w-full object-cover transition-transform duration-700 group-hover:scale-105" sizes="(min-width:1024px) 30vw, (min-width:640px) 45vw, 100vw" /></div>
+                : <div class="grid aspect-[16/10] place-items-center bg-gradient-to-br from-royal to-ink text-white/80"><Icon name={n.videos.length ? 'play' : 'file'} size={40} /></div>}
+              <div class="flex flex-1 flex-col p-6">
+                <time datetime={n.date} class="text-xs font-bold uppercase tracking-wider text-royal">{fmt(n.date)}</time>
+                <h2 class="mt-2 font-display text-xl leading-snug group-hover:text-royal transition-colors">{n.title}</h2>
+                {n.videos.length > 0 && <span class="mt-auto pt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-stone"><Icon name="play" size={14} /> Video</span>}
+              </div>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Layout>

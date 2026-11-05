@@ -1,0 +1,19 @@
+{
+  "stats": {
+    "containers": 482,
+    "countries": 65,
+    "valueMillions": 170,
+    "peopleMillions": 16
+  },
+  "contact": {
+    "email": "info@rotaryworldhelp.com",
+    "phone": "604-308-2257"
+  },
+  "donateUrl": "https://www.canadahelps.org/en/charities/rotary-world-help/",
+  "announcement": {
+    "show": false,
+    "text": "",
+    "link": "",
+    "linkLabel": "Learn more"
+  }
+}

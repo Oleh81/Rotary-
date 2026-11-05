@@ -1,0 +1,44 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { DONATE_URL } from '../data/site';
+const groups = [
+  { icon: 'heart', title: 'Individuals', items: ['Make a cash donation (all donations over $10 receive a tax receipt).', 'Give monthly.', 'Make an estate bequest.', 'Make an in-kind donation.', 'Encourage your church, school or club to sponsor all or part of the cost of shipping a container.'] },
+  { icon: 'users', title: 'Rotarians and New Generations groups', items: ['If your club is not a member, encourage it to join: membership fulfills its international commitment.', 'If your club is a member, encourage it to sponsor all or part of a container.'] },
+  { icon: 'globe', title: 'Corporations', items: ['Make a cash donation from a corporate team-building event.', 'Donate goods or services to Rotary World Help.', 'Sponsor all or part of a container to a country you do business with.', 'All donations are appropriately recognized.'] },
+  { icon: 'hand', title: 'Churches, cultural groups, clubs and associations', items: ['Hold a fundraiser to sponsor all or part of a container.', 'Run a collection drive for us.'] },
+  { icon: 'book', title: 'Schools', items: ['Hold a fundraiser to sponsor all or part of a container.', 'Run a collection drive for us.'] },
+];
+---
+<Layout title="Get Involved" overlay description="Ways to help Rotary World Help: donate, give monthly, sponsor a container, run a collection drive, or bring your Rotary club on board.">
+  <PageHero page="get-involved" eyebrow="Get involved" title="Remember: everyone can help." img="293"
+    lead="Whether you are an individual, a Rotarian, a business, a school or a community group, there is a way to help the next container sail." >
+    <div class="fade-up mt-8 flex flex-wrap gap-3" style="--delay:.8s">
+      <a href={DONATE_URL} target="_blank" rel="noopener" class="btn btn-donate shimmer" data-magnetic><Icon name="heart" size={18} /> Donate</a>
+      <a href="/donate#equipment" class="btn btn-ghost">Donate equipment</a>
+    </div>
+  </PageHero>
+  <section class="py-20 md:py-28">
+    <div class="wrap grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {groups.map((g, i) => (
+        <div class="reveal spot card-lift rounded-3xl bg-white p-7 ring-1 ring-line" style={`--d:${i % 3}`}>
+          <span class="grid size-12 place-items-center rounded-2xl bg-sky text-royal"><Icon name={g.icon} size={22} /></span>
+          <h2 class="mt-6 font-display text-2xl">{g.title}</h2>
+          <ul class="mt-4 grid gap-2.5 text-stone">{g.items.map(t => <li class="flex gap-2.5"><Icon name="check" size={18} class="mt-1 shrink-0 text-royal" />{t}</li>)}</ul>
+        </div>
+      ))}
+      <div class="reveal rounded-3xl bg-ink p-7 text-white on-dark" style="--d:2">
+        <span class="grid size-12 place-items-center rounded-2xl bg-gold text-ink"><Icon name="box" size={22} /></span>
+        <h2 class="mt-6 font-display text-2xl">Ideas for collection drives</h2>
+        <ul class="mt-4 grid gap-2.5 text-white/80">{['Baby equipment and supplies', 'Clean toys and sports equipment', 'School and office supplies'].map(t => <li class="flex gap-2.5"><Icon name="check" size={18} class="mt-1 text-gold" />{t}</li>)}</ul>
+        <p class="mt-6 text-sm text-white/60">Please contact us to find out what is currently needed.</p>
+        <a href="/contact" class="link-arrow mt-3 text-gold">Contact us <Icon name="arrow" size={16} /></a>
+      </div>
+    </div>
+    <div class="wrap mt-10 grid gap-4 sm:grid-cols-2">
+      <a href="/join" class="reveal group card-lift flex items-center justify-between rounded-3xl bg-sky p-7"><span><span class="block font-display text-2xl">How your club can join</span><span class="text-stone">$10 per member per year</span></span><Icon name="arrow" class="text-royal transition-transform group-hover:translate-x-1" /></a>
+      <a href="/request-aid" class="reveal group card-lift flex items-center justify-between rounded-3xl bg-sky p-7" style="--d:1"><span><span class="block font-display text-2xl">Request aid</span><span class="text-stone">For Rotary clubs outside Canada</span></span><Icon name="arrow" class="text-royal transition-transform group-hover:translate-x-1" /></a>
+    </div>
+  </section>
+</Layout>

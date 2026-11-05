@@ -1,0 +1,46 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { clubs } from '../data/site';
+const founding = clubs.filter(c => c.founding).length;
+---
+<Layout title="Member Clubs" overlay description="The Rotary clubs across British Columbia that make up Rotary World Help, including our founding member clubs.">
+  <PageHero page="member-clubs" eyebrow="Member clubs" title="A network of clubs, not individuals."
+    lead="Rotary World Help's members are Rotary clubs. Each pays $10 per member per year and together they make every shipment possible." />
+  <section class="py-20 md:py-28">
+    <div class="wrap">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <p class="reveal text-lg text-stone"><span class="font-display text-4xl text-ink tabular">{clubs.length}</span> clubs listed · <span class="font-semibold text-gold-deep">{founding} founding members</span> marked</p>
+        <a href="/docs/Member-Clubs-2024.pptx" class="reveal btn btn-ghost" rel="noopener"><Icon name="download" size={18} /> Member Clubs 2024 (PowerPoint)</a>
+      </div>
+      <ul class="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {clubs.map((c, i) => (
+          <li class="reveal" style={`--d:${i % 3}`}>
+            {c.website ? (
+              <a href={c.website} target="_blank" rel="noopener" class={`group spot flex h-full min-h-16 items-center justify-between gap-3 rounded-2xl px-5 py-4 ring-1 transition-colors hover:ring-royal focus-visible:ring-royal ${c.founding ? 'bg-ink text-white ring-ink on-dark' : 'bg-white ring-line'}`}>
+                <span class="font-semibold">Rotary Club of {c.name}<span class="sr-only"> (club website, opens in a new tab)</span></span>
+                <span class="flex shrink-0 items-center gap-2">
+                  {c.founding && <span class="rounded-full bg-gold px-2.5 py-1 text-xs font-bold text-ink">Founding</span>}
+                  <Icon name="arrow-up-right" size={16} class={`transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 ${c.founding ? 'text-gold' : 'text-royal'}`} />
+                </span>
+              </a>
+            ) : (
+              <div class={`flex h-full min-h-16 items-center justify-between gap-3 rounded-2xl px-5 py-4 ring-1 ${c.founding ? 'bg-ink text-white ring-ink on-dark' : 'bg-white ring-line'}`}>
+                <span class="font-semibold">Rotary Club of {c.name}</span>
+                {c.founding && <span class="rounded-full bg-gold px-2.5 py-1 text-xs font-bold text-ink">Founding</span>}
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+      <div class="reveal mt-16 grid gap-6 rounded-[2rem] bg-sky p-8 md:grid-cols-[1fr_auto] md:items-center md:p-12">
+        <div>
+          <h2 class="font-display text-3xl">Is your club on the list?</h2>
+          <p class="mt-2 text-stone max-w-2xl">Membership helps a club meet District objectives for International Service, and work parties count as make-ups.</p>
+        </div>
+        <a href="/join" class="btn btn-primary">How your club can join <Icon name="arrow" size={18} class="arrow" /></a>
+      </div>
+    </div>
+  </section>
+</Layout>

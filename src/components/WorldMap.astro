@@ -1,0 +1,93 @@
+---
+// Build-time SVG world map: no map library ships to the browser.
+import { geoNaturalEarth1, geoPath } from 'd3-geo';
+import { feature } from 'topojson-client';
+import world from 'world-atlas/countries-110m.json';
+import { countries, COQUITLAM, stats } from '../data/site';
+import { countryHref } from '../lib/countries';
+
+interface Props { compact?: boolean; id?: string }
+const { compact = false, id = 'map' } = Astro.props;
+
+const W = 1000, H = 520;
+const land = feature(world as any, (world as any).objects.countries) as any;
+land.features = land.features.filter((f: any) => f.properties.name !== 'Antarctica');
+const projection = geoNaturalEarth1().rotate([100, 0]).fitExtent([[6, 6], [W - 6, H - 6]], land);
+const path = geoPath(projection);
+
+const alias: Record<string, string> = {
+  'Dominican Republic': 'Dominican Rep.', 'East Timor': 'Timor-Leste', 'USA (Hurricane Katrina)': '__none',
+  'Congo': '__none', 'Antigua and Barbuda': '__none',
+};
+const hitNames = new Set(countries.map(c => alias[c.name] ?? c.name));
+const shapes = land.features.map((f: any) => ({ d: path(f), name: f.properties.name, hit: hitNames.has(f.properties.name) }));
+
+const [ox, oy] = projection([COQUITLAM.lon, COQUITLAM.lat]) as [number, number];
+const points = countries.map((c, i) => {
+  const [x, y] = projection([c.lon, c.lat]) as [number, number];
+  const dx = x - ox, dy = y - oy;
+  const dist = Math.hypot(dx, dy);
+  const cx = ox + dx / 2, cy = oy + dy / 2 - dist * 0.32;
+  const len = Math.round(dist * 1.25);
+  return { ...c, x, y, d: `M${ox.toFixed(1)},${oy.toFixed(1)} Q${cx.toFixed(1)},${cy.toFixed(1)} ${x.toFixed(1)},${y.toFixed(1)}`, len, i, r: 2.2 + Math.sqrt(c.count) * 0.75 };
+});
+const sorted = [...countries].sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+const total = countries.reduce((s, c) => s + c.count, 0);
+---
+<figure class="relative" data-map id={id}>
+  <div class="relative rounded-[1.75rem] bg-ink overflow-hidden ring-1 ring-white/10 shadow-[0_40px_80px_-40px_rgba(10,27,51,.8)]">
+    <div class="absolute inset-0 bg-[radial-gradient(60%_80%_at_25%_30%,rgba(0,103,200,.35),transparent_70%)]" aria-hidden="true"></div>
+    <svg viewBox={`0 0 ${W} ${H}`} class="relative block w-full h-auto" role="img"
+      aria-label={`Map of ${countries.length} countries that have received Rotary World Help containers, with routes from Coquitlam, British Columbia`} data-reveal-root>
+      <defs>
+        <linearGradient id="arcGrad" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0" stop-color="#f7a81b" stop-opacity=".95" />
+          <stop offset="1" stop-color="#7cc0ff" stop-opacity=".9" />
+        </linearGradient>
+        <radialGradient id="dotGlow"><stop offset="0" stop-color="#f7a81b" stop-opacity=".8"/><stop offset="1" stop-color="#f7a81b" stop-opacity="0"/></radialGradient>
+      </defs>
+      <g aria-hidden="true">
+        {shapes.map(s => <path d={s.d} class={`map-land ${s.hit ? 'is-hit' : ''}`} data-name={s.hit ? s.name : undefined} />)}
+      </g>
+      <g aria-hidden="true">
+        {points.map(p => <path d={p.d} class="map-arc" style={`--len:${p.len};--i:${p.i}`} />)}
+      </g>
+      <g>
+        {points.map(p => (
+          <a href={countryHref(p.name)} class="map-dot cursor-pointer" data-name={p.name} data-containers={p.count}
+             aria-label={`${p.name}: ${p.count} ${p.count === 1 ? 'container' : 'containers'}. Open the ${p.name} page`}>
+            <circle cx={p.x} cy={p.y} r={p.r * 2.4} fill="url(#dotGlow)" />
+            <circle cx={p.x} cy={p.y} r={p.r} fill="#f7a81b" stroke="#0a1b33" stroke-width="1" />
+            <circle cx={p.x} cy={p.y} r="14" fill="transparent" />
+          </a>
+        ))}
+      </g>
+      <g aria-hidden="true">
+        <circle cx={ox} cy={oy} r="6" fill="#fff" class="map-pulse" />
+        <circle cx={ox} cy={oy} r="5" fill="#fff" stroke="#f7a81b" stroke-width="2.5" />
+        <text x={ox + 10} y={oy - 10} fill="#fff" font-size="13" font-weight="700" font-family="Plus Jakarta Sans Variable, sans-serif">Coquitlam, BC</text>
+      </g>
+    </svg>
+    <div class="map-comets" data-w={W} style={`width:${W}px;height:${H}px`} aria-hidden="true">
+      {points.map(p => <span class="map-comet" style={`offset-path:path('${p.d}');--len:${p.len};--i:${p.i}`}></span>)}
+    </div>
+    <div class="map-tip pointer-events-none absolute z-10 rounded-xl bg-white px-3 py-2 text-sm font-semibold text-ink shadow-xl opacity-0 transition-opacity duration-200" role="status" aria-live="polite"></div>
+  </div>
+  {!compact && (
+    <figcaption class="mt-5 grid gap-4 md:grid-cols-[1fr_auto] md:items-start">
+      <p class="text-sm text-stone max-w-2xl">
+        Routes from our warehouse to the {countries.length} countries listed on the Rotary World Help chart
+        “RWH Shipments – 61 Countries” ({total} containers documented by country, May 2022). Dot size shows the number of containers.
+        Today the total is {stats.containers} containers to {stats.countries} countries; the four most recent countries are not yet itemized on a published list.
+      </p>
+      <details class="group rounded-2xl border border-line bg-white/70 px-5 py-3 md:min-w-80">
+        <summary class="cursor-pointer list-none font-semibold flex items-center justify-between gap-3 min-h-11">
+          All countries as a list <span class="transition-transform group-open:rotate-180"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
+        </summary>
+        <ol class="mt-3 grid grid-cols-2 gap-x-6 gap-y-1 text-sm max-h-80 overflow-auto pr-2">
+          {sorted.map(c => <li><a href={countryHref(c.name)} class="flex justify-between gap-2 rounded px-1 hover:bg-sky hover:text-royal"><span class="underline decoration-line underline-offset-2">{c.name}</span><span class="tabular text-stone">{c.count}</span></a></li>)}
+        </ol>
+      </details>
+    </figcaption>
+  )}
+</figure>

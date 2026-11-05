@@ -1,0 +1,83 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import Form from '../components/Form.astro';
+import { DONATE_URL, org, perContainer } from '../data/site';
+---
+<Layout title="Donate" overlay description="Donate to Rotary World Help through CanadaHelps and receive a Canadian tax receipt, or offer medical and educational equipment for our next container.">
+  <PageHero page="donate" eyebrow="Donate" title="Two ways to fill a container." img="1835"
+    lead="Give money to cover freight, or give equipment to fill the container. Both go straight to communities in need, Rotary club to Rotary club." />
+
+  <section class="py-20 md:py-28">
+    <div class="wrap grid gap-6 lg:grid-cols-2">
+      <div class="reveal relative overflow-hidden rounded-[2rem] bg-ink p-8 text-white on-dark md:p-12">
+        <div class="absolute -right-24 -top-24 size-72 rounded-full bg-gold/25 blur-3xl" aria-hidden="true"></div>
+        <span class="grid size-14 place-items-center rounded-2xl bg-gold text-ink"><Icon name="heart" size={26} /></span>
+        <h2 class="mt-8 font-display text-4xl">Monetary donation</h2>
+        <p class="mt-3 text-white/80 leading-relaxed">Donations are processed securely by CanadaHelps, which issues an official Canadian tax receipt. All donations over $10 receive a tax receipt.</p>
+        <ul class="mt-6 grid gap-2 text-white/85">
+          {['One-time or monthly gifts', 'Estate bequests', 'Corporate gifts, for example from a team-building event', 'Sponsor all or part of a container'].map(t => <li class="flex gap-2"><Icon name="check" size={18} class="mt-1 text-gold" />{t}</li>)}
+        </ul>
+        <a href={DONATE_URL} target="_blank" rel="noopener" class="btn btn-donate shimmer beam mt-10 w-full !min-h-16 text-lg" data-magnetic data-track="donate-page">
+          <Icon name="heart" /> Donate through CanadaHelps <Icon name="arrow-up-right" class="arrow" /><span class="sr-only"> (opens in a new tab)</span>
+        </a>
+        <p class="mt-4 flex items-center gap-2 text-sm text-white/60"><Icon name="lock" size={16} /> Registered Canadian charity{org.businessNumber && `, Business No. ${org.businessNumber}`}</p>
+      </div>
+
+      <div id="equipment" class="reveal scroll-mt-24 rounded-[2rem] bg-white p-8 ring-1 ring-line md:p-12" style="--d:1">
+        <span class="grid size-14 place-items-center rounded-2xl bg-sky text-royal"><Icon name="box" size={26} /></span>
+        <h2 class="mt-8 font-display text-4xl">Non-monetary donation</h2>
+        <p class="mt-3 text-stone leading-relaxed">Hospitals, clinics, care homes, dental and optical offices, schools and individuals: tell us what you have and we will be in touch about a pick-up.</p>
+        <Form kind="equipment" class="mt-8 grid gap-4">
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div class="field"><label for="eq-first">First name</label><input id="eq-first" name="first_name" autocomplete="given-name" class="input" /></div>
+            <div class="field"><label for="eq-last">Last name</label><input id="eq-last" name="last_name" autocomplete="family-name" class="input" /></div>
+            <div class="field"><label for="eq-email">Email address <span class="text-[#b42318]">*</span></label><input id="eq-email" name="email" type="email" required autocomplete="email" class="input" /></div>
+            <div class="field"><label for="eq-phone">Phone number</label><input id="eq-phone" name="phone" type="tel" autocomplete="tel" class="input" /></div>
+            <div class="field sm:col-span-2"><label for="eq-addr">Street address</label><input id="eq-addr" name="address" autocomplete="street-address" class="input" /></div>
+            <div class="field"><label for="eq-city">City</label><input id="eq-city" name="city" autocomplete="address-level2" class="input" /></div>
+            <div class="field"><label for="eq-prov">Province or state</label><input id="eq-prov" name="province" autocomplete="address-level1" class="input" /></div>
+            <div class="field"><label for="eq-post">Postal code</label><input id="eq-post" name="postal" autocomplete="postal-code" class="input" /></div>
+            <div class="field"><label for="eq-country">Country</label><input id="eq-country" name="country" autocomplete="country-name" value="Canada" class="input" /></div>
+          </div>
+          <div class="field"><label for="eq-items">What would you like to donate? <span class="text-[#b42318]">*</span></label>
+            <textarea id="eq-items" name="items" required maxlength="2000" class="input" placeholder="For example: 12 hospital beds with mattresses, 4 wheelchairs"></textarea>
+            <span class="hint">Include quantities, condition and where the items are.</span></div>
+          <button type="submit" class="btn btn-primary w-full sm:w-auto">Send equipment offer <Icon name="arrow" size={18} class="arrow" /></button>
+        </Form>
+      </div>
+    </div>
+  </section>
+
+  <section class="pb-20 md:pb-28" aria-labelledby="legacy-t">
+    <div class="wrap">
+      <div class="reveal rounded-[2rem] bg-white p-8 ring-1 ring-line md:p-12">
+        <p class="eyebrow">Legacy gifts</p>
+        <h2 id="legacy-t" class="mt-4 font-display text-3xl">With thanks to our legacy donors</h2>
+        <p class="mt-4 max-w-2xl text-stone leading-relaxed">Rotary World Help thanks the following donors for their support through legacy donations. Their generosity will provide a legacy that will benefit so many people in need around the world.</p>
+        <ul class="mt-6 flex flex-wrap gap-3">{['Donald Cameron', 'Donald McKinnon'].map(n => <li class="rounded-full bg-sky px-5 py-2 font-semibold text-royal">{n}</li>)}</ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-sand/60 py-20 md:py-28">
+    <div class="wrap grid gap-10 lg:grid-cols-3">
+      <div class="lg:col-span-1">
+        <p class="eyebrow reveal">Where your gift goes</p>
+        <h2 class="reveal mt-4 font-display text-[clamp(1.9rem,4vw,3rem)] leading-tight" style="--d:1">Low overhead by design.</h2>
+      </div>
+      <ul class="grid gap-4 sm:grid-cols-3 lg:col-span-2">
+        {[
+          ['hand', 'All volunteer', 'No payroll and extremely low administration expenses.'],
+          ['ship', 'Freight first', `Each container's ${'$'}${perContainer.adminFee.toLocaleString('en-CA')} administration fee covers warehousing, pick-up and our truck.`],
+          ['users', 'Rotary to Rotary', 'Goods are shipped club to club, so the aid reaches the people it is meant for.'],
+        ].map(([ic, t, d], i) => (
+          <li class="reveal spot rounded-3xl bg-white p-6 ring-1 ring-line" style={`--d:${i}`}>
+            <Icon name={ic} size={24} class="text-royal" /><p class="mt-4 font-semibold">{t}</p><p class="mt-1 text-sm text-stone leading-relaxed">{d}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Layout>

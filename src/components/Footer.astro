@@ -1,0 +1,65 @@
+---
+import Icon from './Icon.astro';
+import Form from './Form.astro';
+import { org, DONATE_URL } from '../data/site';
+---
+<footer class="relative bg-ink text-white on-dark overflow-hidden grain">
+  <div class="absolute -top-40 right-[-10%] size-[36rem] rounded-full bg-royal/40 blur-3xl" aria-hidden="true"></div>
+  <div class="wrap relative pt-20 pb-10">
+    <div class="grid gap-12 lg:grid-cols-[1.3fr_1fr]">
+      <div>
+        <p class="eyebrow">Remember, everyone can help</p>
+        <p class="mt-4 font-display text-4xl md:text-5xl leading-[1.05] max-w-xl">Help communities help themselves.</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href={DONATE_URL} target="_blank" rel="noopener" class="btn btn-donate" data-track="footer"><Icon name="heart" size={18} /> Donate</a>
+          <a href="/donate#equipment" class="btn btn-ghost"><Icon name="box" size={18} /> Donate equipment</a>
+        </div>
+      </div>
+      <div class="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
+        <h2 class="font-display text-2xl">Join our newsletter</h2>
+        <p class="mt-1 text-white/70 text-sm">Stay up to date on loadings, arrivals and events.</p>
+        <Form kind="subscribe" class="mt-4" dark compact>
+          <div class="flex flex-col sm:flex-row gap-2">
+            <label for="sub-email" class="sr-only">Email address</label>
+            <input id="sub-email" name="email" type="email" required autocomplete="email" placeholder="you@example.com" class="input !bg-white/95 flex-1" />
+            <button type="submit" class="btn btn-primary !bg-azure hover:!bg-white hover:!text-ink">Subscribe</button>
+          </div>
+        </Form>
+      </div>
+    </div>
+
+    <div class="mt-16 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 text-[.95rem]">
+      <div>
+        <h3 class="font-semibold text-gold">Warehouse</h3>
+        <address class="not-italic mt-3 text-white/80 leading-relaxed">{org.warehouse.lines.map(l => <>{l}<br /></>)}</address>
+        <a href={org.warehouse.maps} target="_blank" rel="noopener" class="link-arrow mt-3 text-sm">Get directions <Icon name="arrow-up-right" size={16} /></a>
+      </div>
+      <div>
+        <h3 class="font-semibold text-gold">Mailing address</h3>
+        <address class="not-italic mt-3 text-white/80 leading-relaxed">{org.mailing.map(l => <>{l}<br /></>)}</address>
+      </div>
+      <div>
+        <h3 class="font-semibold text-gold">Contact</h3>
+        <ul class="mt-3 space-y-2 text-white/80">
+          <li><a href={`mailto:${org.email}`} class="inline-flex items-center gap-2 hover:text-white min-h-11"><Icon name="mail" size={18} />{org.email}</a></li>
+          <li><a href={org.phoneHref} class="inline-flex items-center gap-2 hover:text-white min-h-11"><Icon name="phone" size={18} />{org.phone}</a></li>
+        </ul>
+        <div class="mt-3 flex gap-2">
+          <a href={org.facebook} target="_blank" rel="noopener" class="grid size-11 place-items-center rounded-full ring-1 ring-white/20 hover:bg-white hover:text-ink transition-colors" aria-label="Rotary World Help on Facebook"><Icon name="facebook" size={18} /></a>
+          <a href={org.youtube} target="_blank" rel="noopener" class="grid size-11 place-items-center rounded-full ring-1 ring-white/20 hover:bg-white hover:text-ink transition-colors" aria-label="Rotary World Help on YouTube"><Icon name="youtube" size={18} /></a>
+        </div>
+      </div>
+      <div>
+        <h3 class="font-semibold text-gold">Explore</h3>
+        <ul class="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-white/80">
+          {[['Our Story','/our-story'],['Our Impact','/our-impact'],['Countries','/countries'],['Directors','/directors'],['Member Clubs','/member-clubs'],['Gallery','/gallery'],['News','/news'],['Newsletters','/newsletters'],['Calendar','/calendar'],['Join','/join'],['Request Aid','/request-aid'],['Donate','/donate'],['Contact','/contact']].map(([l, h]) => <li><a href={h} class="hover:text-white">{l}</a></li>)}
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-16 flex flex-col gap-4 border-t border-white/10 pt-8 text-sm text-white/60 md:flex-row md:items-center md:justify-between">
+      <p>{org.legalName} ({org.operatingAs}). Canadian registered charity{org.businessNumber && <>, Business No. <span class="tabular text-white/85">{org.businessNumber}</span></>}. Sanctioned by Rotary International.</p>
+      <p class="flex gap-4"><a href="/privacy" class="hover:text-white">Privacy policy</a><span>© {new Date().getFullYear()} Rotary World Help</span></p>
+    </div>
+  </div>
+</footer>

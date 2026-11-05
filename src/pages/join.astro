@@ -1,0 +1,63 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import Form from '../components/Form.astro';
+import { org, perContainer } from '../data/site';
+---
+<Layout title="How Your Rotary Club Can Join" overlay description="Rotary clubs can join Rotary World Help for $10 CDN per member per year and sponsor containers of medical and educational aid to partner clubs abroad.">
+  <PageHero page="join" eyebrow="How your Rotary club can join" title="$10 per member. Every shipment, worldwide." img="1803"
+    lead="For an annual fee of $10 CDN per member, your club becomes part of an organization that works with Rotary clubs worldwide to help communities help themselves." />
+  <section class="py-20 md:py-28">
+    <div class="wrap grid gap-14 lg:grid-cols-[1fr_1fr]">
+      <div class="prose-rwh">
+        <p class="reveal">By joining Rotary World Help, your club contributes towards every shipment. The membership fee helps offset our administrative and procurement costs.</p>
+        <p class="reveal">Being a member helps a club meet District objectives for International Service. Work parties such as pick-ups, sorting and loading count as make-ups and are great fellowship builders for clubs.</p>
+        <h2 class="reveal">Sponsoring a container</h2>
+        <p class="reveal">A member club can sponsor all or part of a 40-foot container to a partner Rotary club in another country by covering the shipping costs plus a ${perContainer.adminFee.toLocaleString('en-CA')} CDN contribution to Rotary World Help. The administration fee helps cover warehousing, pick-up and the operating costs of our truck.</p>
+        <p class="reveal"><strong>The cost is the shipping cost plus $1,500. A club that is not yet a member also pays two years’ membership dues (the current and next year).</strong> Clubs can pay the full amount, split it with other Rotary World Help clubs, or split it with the receiving club.</p>
+        <div class="reveal not-prose mt-8 grid grid-cols-2 gap-4">
+          <div class="rounded-3xl bg-ink p-6 text-white on-dark"><p class="font-display text-4xl text-gold tabular">${perContainer.replacementValue.toLocaleString('en-CA')}</p><p class="mt-1 text-sm text-white/75">estimated average replacement value of one container</p></div>
+          <div class="rounded-3xl bg-ink p-6 text-white on-dark"><p class="font-display text-4xl text-gold tabular">{perContainer.livesImpacted.toLocaleString('en-CA')}+</p><p class="mt-1 text-sm text-white/75">lives directly impacted by each container (estimated)</p></div>
+        </div>
+        <p class="reveal mt-6 font-display text-2xl">“Rotary World Help is Rotary’s best bang for your buck.”</p>
+        <h2 class="reveal">How to pay</h2>
+        <p class="reveal">Complete the membership form and mail it with two cheques, one for the current year’s fees and one for next year’s, at $10 for each member of your club. Make the cheques payable to <strong>Rotary World Help</strong> and mail them to {org.mailing.join(', ')}.</p>
+        <p class="reveal"><a href="/docs/RWH-Membership-2019.pdf" target="_blank" rel="noopener">Download the printable membership form (PDF)</a></p>
+      </div>
+      <div class="lg:sticky lg:top-28 lg:self-start">
+        <div class="reveal rounded-[2rem] bg-white p-7 ring-1 ring-line md:p-10">
+          <h2 class="font-display text-3xl">Membership form</h2>
+          <p class="mt-1 text-stone">Fields marked <span class="text-[#b42318]">*</span> are required.</p>
+          <Form kind="membership" class="mt-6 grid gap-4">
+            <div class="field"><label for="m-club">Rotary club name <span class="text-[#b42318]">*</span></label><input id="m-club" name="club" required class="input" /></div>
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div class="field"><label for="m-members">Number of members <span class="text-[#b42318]">*</span></label><input id="m-members" name="members" type="number" min="1" max="2000" inputmode="numeric" required class="input" /></div>
+              <div class="field"><label for="m-amount">Amount of cheque enclosed</label><input id="m-amount" name="amount" inputmode="decimal" class="input" /></div>
+            </div>
+            <fieldset class="grid gap-4 rounded-2xl border border-line p-4">
+              <legend class="px-2 font-semibold">Club contact</legend>
+              <div class="field"><label for="m-name">Name <span class="text-[#b42318]">*</span></label><input id="m-name" name="contact_name" required autocomplete="name" class="input" /></div>
+              <div class="grid gap-4 sm:grid-cols-2">
+                <div class="field"><label for="m-phone">Residence phone</label><input id="m-phone" name="phone" type="tel" autocomplete="tel" class="input" /></div>
+                <div class="field"><label for="m-cell">Cellular phone</label><input id="m-cell" name="cell" type="tel" class="input" /></div>
+                <div class="field sm:col-span-2"><label for="m-email">Email <span class="text-[#b42318]">*</span></label><input id="m-email" name="email" type="email" required autocomplete="email" class="input" /></div>
+              </div>
+            </fieldset>
+            <fieldset class="grid gap-4 rounded-2xl border border-line p-4">
+              <legend class="px-2 font-semibold">Alternative club contact</legend>
+              <div class="grid gap-4 sm:grid-cols-2">
+                <div class="field"><label for="m-name2">Name</label><input id="m-name2" name="alt_name" class="input" /></div>
+                <div class="field"><label for="m-email2">Email</label><input id="m-email2" name="alt_email" type="email" class="input" /></div>
+                <div class="field"><label for="m-phone2">Residence phone</label><input id="m-phone2" name="alt_phone" type="tel" class="input" /></div>
+                <div class="field"><label for="m-cell2">Cellular phone</label><input id="m-cell2" name="alt_cell" type="tel" class="input" /></div>
+              </div>
+            </fieldset>
+            <div class="field"><label for="m-countries">Countries of interest</label><input id="m-countries" name="countries" class="input" placeholder="For example: Kenya, Philippines" /></div>
+            <button type="submit" class="btn btn-primary">Submit membership form <Icon name="arrow" size={18} class="arrow" /></button>
+          </Form>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,39 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Icon from '../../components/Icon.astro';
+import WorldMap from '../../components/WorldMap.astro';
+import { countryPages } from '../../lib/countries';
+---
+<Layout title="Countries we have helped" overlay description={`Every country that has received Rotary World Help containers, with the number of containers, photos, stories and videos from each.`}>
+  <PageHero page="countries" eyebrow="Countries" title="Every country, every container." img="1350"
+    lead="Choose a country to see the containers sent there, loading photos, stories, letters and videos." />
+
+  <section class="relative overflow-hidden bg-ink py-16 text-white on-dark md:py-20" aria-label="Map">
+    <div class="wrap"><div class="reveal-scale"><WorldMap id="countries-map" compact /></div>
+      <p class="mt-4 text-sm text-white/70">Tap a dot to open that country.</p></div>
+  </section>
+
+  <section class="py-20 md:py-24" aria-labelledby="list-t">
+    <div class="wrap">
+      <h2 id="list-t" class="reveal font-display text-[clamp(1.9rem,4vw,3rem)] leading-tight">All {countryPages.length} countries</h2>
+      <p class="reveal mt-2 text-stone">Container counts from the Rotary World Help chart “RWH Shipments – 61 Countries” (May 2022).</p>
+      <ul class="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {countryPages.map((c, k) => {
+          const nl = c.ships.length + c.albums.length;
+          const extras = [nl && `${nl} photo album${nl > 1 ? 's' : ''}`, c.stories.length && `${c.stories.length} stor${c.stories.length > 1 ? 'ies' : 'y'}`, c.vids.length && `${c.vids.length} video${c.vids.length > 1 ? 's' : ''}`].filter(Boolean);
+          return (
+            <li class="reveal" style={`--d:${k % 3}`}><a href={`/countries/${c.slug}`} class="group spot card-lift flex h-full items-center gap-4 rounded-2xl bg-white px-5 py-4 ring-1 ring-line hover:ring-royal">
+              <span class="grid size-14 shrink-0 place-items-center rounded-xl bg-sky font-display text-2xl text-royal tabular transition-colors group-hover:bg-royal group-hover:text-white">{c.count}</span>
+              <span class="min-w-0 flex-1">
+                <span class="block font-semibold">{c.name.replace(/\s*\(.*\)/, '')}</span>
+                <span class="block text-sm text-stone">{c.count === 1 ? 'container' : 'containers'}{extras.length ? ` · ${extras.join(' · ')}` : ''}</span>
+              </span>
+              <Icon name="arrow" size={18} class="text-royal transition-transform group-hover:translate-x-1" />
+            </a></li>
+          );
+        })}
+      </ul>
+    </div>
+  </section>
+</Layout>

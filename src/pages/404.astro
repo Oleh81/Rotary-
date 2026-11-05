@@ -1,0 +1,17 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+---
+<Layout title="Page not found" description="The page you were looking for could not be found.">
+  <section class="wrap grid min-h-[70vh] place-items-center py-24 text-center">
+    <div>
+      <p class="font-display text-[clamp(5rem,16vw,11rem)] leading-none text-royal/90 tabular">404</p>
+      <h1 class="mt-4 font-display text-4xl">This container went somewhere else.</h1>
+      <p class="mt-3 text-stone">The page you were looking for could not be found.</p>
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <a href="/" class="btn btn-primary"><Icon name="arrow" size={18} class="rotate-180" /> Back to home</a>
+        <a href="/contact" class="btn btn-ghost">Contact us</a>
+      </div>
+    </div>
+  </section>
+</Layout>

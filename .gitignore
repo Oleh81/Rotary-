@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.vercel/
+.astro/
+.env*
+.DS_Store
+
+# generated at build from public/uploads
+public/media/up/
+src/data/uploads.json

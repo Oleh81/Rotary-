@@ -1,0 +1,143 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import Form from '../components/Form.astro';
+import { org, perContainer } from '../data/site';
+const F = (id: string, label: string, opts: { req?: boolean; type?: string; ac?: string; area?: boolean; hint?: string; span?: boolean } = {}) => ({ id, label, ...opts });
+const parts = [
+  { name: 'Consignee', title: 'Part A: Consignee information', note: 'The consignee may be different from the recipient Rotary club.', fields: [
+    F('consignee_name', 'Consignee name', { req: true, span: true }), F('email', 'Email address', { req: true, type: 'email', ac: 'email' }), F('consignee_mobile', 'Mobile number', { type: 'tel' }),
+    F('consignee_phone', 'Telephone number (residence)', { type: 'tel' }), F('consignee_street', 'Street address (no P.O. boxes)'), F('consignee_city', 'City'), F('consignee_postal', 'ZIP or postal code'), F('country', 'Country', { req: true }),
+  ] },
+  { name: 'Recipient club', title: 'Part B: Recipient Rotary club', fields: [
+    F('club', 'Recipient Rotary club', { req: true, span: true }), F('club_street', 'Club street address (no P.O. boxes)', { span: true }), F('club_city', 'City'), F('club_country', 'Country'),
+    F('club_postal', 'ZIP or postal code'), F('club_url', 'Club website', { type: 'url' }), F('club_members', 'Number of members in the club', { type: 'number' }), F('club_contact', 'Contact person'), F('club_contact_mobile', 'Contact mobile number', { type: 'tel' }), F('club_contact_phone', 'Contact telephone (residence)', { type: 'tel' }), F('club_contact_email', 'Contact email', { type: 'email' }),
+  ] },
+  { name: 'Shipping documents', title: 'Part C: Shipping documents', note: 'Where the shipping documents will be sent.', fields: [
+    F('docs_name', 'Person receiving the documents'), F('docs_email', 'Their email', { type: 'email' }), F('docs_mobile', 'Their mobile number', { type: 'tel' }), F('docs_phone', 'Their telephone number', { type: 'tel' }),
+    F('docs_street', 'Street address', { span: true }), F('docs_city', 'City'), F('docs_postal', 'ZIP or postal code'), F('docs_country', 'Country'),
+  ] },
+  { name: 'Tax', title: 'Part D: Tax information', fields: [F('tax_number', 'Consignee’s tax number', { span: true })] },
+  { name: 'Need', title: 'Part E: Required information', fields: [
+    F('requester', 'Who is requesting aid?', { span: true }),
+    F('description', 'Describe the city, region or country where the consignee provides humanitarian assistance, including the estimated population of each group receiving help, and the people in need who will benefit.', { req: true, area: true, span: true }),
+    F('wishlist', 'The top 8 items on your wish list', { area: true, span: true }),
+  ] },
+  { name: 'Country rules', title: 'Part F: Country rules and regulations', fields: [
+    F('compliance', 'Compliance: have you confirmed with your tax authorities that the cargo complies with your import regulations (for example, fabric fumigation requirements)?', { area: true, span: true }),
+    F('customs', 'Customs: have you confirmed with your customs department that all of the humanitarian aid will come in tax and duty free?', { area: true, span: true }),
+    F('port', 'Name of the nearest international port of entry to the consignee', { span: true }),
+    F('inland', 'Have you arranged transport from the port of entry to the final destination?', { area: true, span: true }),
+    F('brokerage', 'Have you arranged to clear the brokerage fees in your country?', { area: true, span: true }),
+    F('costs_understood', 'Have you read and do you understand all the costs of receiving a container?', { area: true, span: true }),
+  ] },
+  { name: 'Contributions', title: 'Part G: Rotary International contributions', fields: [
+    F('payer', 'Who is paying for the shipment and other expenses?', { area: true, span: true }),
+    F('contribution', 'How much can your club contribute to the shipping costs?', { span: true }),
+  ] },
+];
+// Cargo Distribution Form, field for field as on the RWH site (all required there).
+const cargo = [
+  F('project', 'Project number'), F('club', 'Receiving Rotary club'),
+  F('consignees', 'Number of consignees who received the cargo', { type: 'number' }), F('arrival', 'Arrival date of the cargo', { type: 'date' }),
+  F('recipients', 'Describe who the recipients were', { area: true, span: true }),
+  F('condition', 'Condition of the cargo', { area: true, span: true }),
+  F('customs', 'Any problems with local customs? If yes, please explain in detail.', { area: true, span: true }),
+  F('distribution', 'Who distributed the cargo, and how was it distributed?', { area: true, span: true }),
+  F('rep_present', 'Was a representative of the receiving Rotary club present at the distribution? If not, why not?', { area: true, span: true }),
+  F('name', 'Name of the person completing this report', { ac: 'name' }), F('phones', 'Telephone numbers (residence and cellular)', { type: 'tel', ac: 'tel' }),
+  F('email', 'Email', { type: 'email', ac: 'email' }), F('date', 'Date', { type: 'date' }),
+];
+---
+<Layout title="Request Aid" overlay description="How Rotary clubs outside Canada can request a container of medical, dental, optical, educational and sports equipment from Rotary World Help.">
+  <PageHero page="request-aid" eyebrow="Request for aid" title="Our only criterion for aid is need." img="1729"
+    lead="Rotary World Help gathers, sorts, records and ships 20- or 40-foot containers of medical, dental, optical, educational and sports goods to countries where people are in need, Rotary club to Rotary club." />
+
+  <section class="py-20 md:py-28">
+    <div class="wrap grid gap-12 lg:grid-cols-[.9fr_1.1fr]">
+      <div class="space-y-6">
+        <div class="reveal rounded-3xl bg-white p-7 ring-1 ring-line">
+          <h2 class="font-display text-2xl">Definitions</h2>
+          <dl class="mt-4 grid gap-4 text-stone">
+            <div><dt class="font-semibold text-ink">Sponsoring Rotary club</dt><dd>Must be a member club of Rotary World Help. It ensures all the required funds are available before the container ships and, if a matching grant is used, that all Rotary International forms are completed and filed.</dd></div>
+            <div><dt class="font-semibold text-ink">Recipient Rotary club</dt><dd>A club in a country other than Canada that agrees to oversee the receipt of the container.</dd></div>
+          </dl>
+        </div>
+        <div class="reveal rounded-3xl bg-white p-7 ring-1 ring-line" style="--d:1">
+          <h2 class="font-display text-2xl">Who pays for what</h2>
+          <ul class="mt-4 grid gap-3 text-stone">
+            <li class="flex gap-3"><Icon name="ship" size={20} class="mt-0.5 shrink-0 text-royal" /><span>The sponsoring club pays shipping to the major port in the receiving country, plus a ${perContainer.adminFee.toLocaleString('en-CA')} CDN administration fee. A non-member club must first join and pay the current and next year’s dues.</span></li>
+            <li class="flex gap-3"><Icon name="truck" size={20} class="mt-0.5 shrink-0 text-royal" /><span>The receiving club pays brokerage fees to clear customs and the cost of transport from the port to the consignee, unless the sponsoring club agrees to pay it.</span></li>
+            <li class="flex gap-3"><Icon name="shield" size={20} class="mt-0.5 shrink-0 text-royal" /><span>The consignee is responsible for any duties, taxes or fees levied, and for demurrage if the container is held up after entering the country.</span></li>
+            <li class="flex gap-3"><Icon name="hand" size={20} class="mt-0.5 shrink-0 text-royal" /><span>All costs are paid by Rotary clubs. Receiving clubs are expected to contribute some of the shipping costs according to their ability to pay.</span></li>
+            <li class="flex gap-3"><Icon name="file" size={20} class="mt-0.5 shrink-0 text-royal" /><span>Three final shipping quotes are obtained for each container. Rotary District and Global Grants may be applied for to cover part of the shipping (<a class="underline" href="https://www.rotary.org/en/our-programs/grants" target="_blank" rel="noopener">rotary.org</a>). Once approved, the sponsoring member club sends a cheque for the full cost of the shipment.</span></li>
+            <li class="flex gap-3"><Icon name="users" size={20} class="mt-0.5 shrink-0 text-royal" /><span>The sponsoring club is expected to help provide people for the container loading.</span></li>
+          </ul>
+        </div>
+        <div class="reveal rounded-3xl bg-ink p-7 text-white on-dark" style="--d:2">
+          <h2 class="font-display text-2xl">After approval</h2>
+          <ol class="mt-4 grid gap-3 text-white/80">
+            <li><span class="font-semibold text-gold">1.</span> The Shipping Manager checks the form is complete and forwards it to the Board of Directors for approval.</li>
+            <li><span class="font-semibold text-gold">2.</span> The recipient club is told the shipping and customs details, clears the container through customs and oversees unloading.</li>
+            <li><span class="font-semibold text-gold">3.</span> Within three months of unloading, the recipient club sends a <a href="#cargo-report" class="underline">Cargo Distribution Report</a> with photos. No new application is considered until it is received.</li>
+          </ol>
+          <p class="mt-5 text-sm text-white/60">Loading dates depend on goods and shipping bookings being available. Questions: Jerry Zdril, President and Shipping Manager, via <a class="underline" href={`mailto:${org.email}`}>{org.email}</a>.</p>
+        </div>
+      </div>
+
+      <div class="reveal rounded-[2rem] bg-white p-6 ring-1 ring-line md:p-10" data-steps>
+        <h2 class="font-display text-3xl">Request for Aid form</h2>
+        <p class="mt-2 text-sm text-stone">Please complete the form in English and online; there is no paper version. If you do not have all the details for a part, leave those fields blank and continue. Fields marked <span class="text-[#b42318]">*</span> are required.</p>
+        <div class="mt-6 h-2 overflow-hidden rounded-full bg-sand" aria-hidden="true"><div class="h-full w-full origin-left scale-x-0 rounded-full bg-gradient-to-r from-azure to-royal transition-transform duration-500" data-progress></div></div>
+        <p class="mt-3 text-sm font-semibold text-royal" data-step-label aria-live="polite"></p>
+        <Form kind="aid" class="mt-4">
+          {parts.map(p => (
+            <fieldset data-step={p.name} class="grid gap-4 sm:grid-cols-2">
+              <legend class="mb-2 font-display text-2xl sm:col-span-2">{p.title}</legend>
+              {p.note && <p class="text-sm text-stone sm:col-span-2 -mt-2">{p.note}</p>}
+              {p.fields.map(f => (
+                <div class={`field ${f.span ? 'sm:col-span-2' : ''}`}>
+                  <label for={`aid-${f.id}`}>{f.label}{f.req && <span class="text-[#b42318]"> *</span>}</label>
+                  {f.area ? <textarea id={`aid-${f.id}`} name={f.id} required={f.req} maxlength="3000" class="input !min-h-28"></textarea>
+                    : <input id={`aid-${f.id}`} name={f.id} type={f.type || 'text'} required={f.req} autocomplete={f.ac} class="input" />}
+                </div>
+              ))}
+            </fieldset>
+          ))}
+          <div class="mt-8 flex flex-wrap items-center justify-between gap-3">
+            <button type="button" class="btn btn-ghost" data-step-prev><Icon name="chevron-left" size={18} /> Back</button>
+            <button type="button" class="btn btn-primary ml-auto" data-step-next>Next part <Icon name="arrow" size={18} class="arrow" /></button>
+            <button type="submit" class="btn btn-donate ml-auto" data-step-submit>Submit request <Icon name="arrow" size={18} class="arrow" /></button>
+          </div>
+          <p class="mt-4 text-xs text-stone">By submitting, the consignee certifies that it is entitled to receive humanitarian cargo free of all import charges, taxes, custom duties and fees.</p>
+        </Form>
+      </div>
+    </div>
+  </section>
+
+  <section id="cargo-report" class="scroll-mt-24 bg-sand/60 py-20 md:py-28" aria-labelledby="cargo-t">
+    <div class="wrap grid gap-12 lg:grid-cols-[.9fr_1.1fr]">
+      <div class="lg:sticky lg:top-28 lg:self-start">
+        <p class="eyebrow reveal">After your container arrives</p>
+        <h2 id="cargo-t" class="reveal mt-4 font-display text-[clamp(1.9rem,4vw,3rem)] leading-tight" style="--d:1">Cargo Distribution Report</h2>
+        <p class="reveal mt-5 text-lg text-stone" style="--d:2">The recipient club completes this report within three months of unloading. Please complete it in English. Every field is required.</p>
+        <p class="reveal mt-4 text-stone" style="--d:3">While not mandatory, we would appreciate pictures, newspaper articles, videos, stories or personal anecdotes about the unloading, the distribution and the people who received the equipment. Email them to <a class="font-semibold text-royal underline" href="mailto:shippingmanager@rotaryworldhelp.com">shippingmanager@rotaryworldhelp.com</a>.</p>
+      </div>
+      <div class="reveal rounded-[2rem] bg-white p-6 ring-1 ring-line md:p-10">
+        <Form kind="cargo">
+          <div class="grid gap-4 sm:grid-cols-2">
+          {cargo.map(f => (
+            <div class={`field ${f.span ? 'sm:col-span-2' : ''}`}>
+              <label for={`cg-${f.id}`}>{f.label} <span class="text-[#b42318]">*</span></label>
+              {f.area ? <textarea id={`cg-${f.id}`} name={f.id} required maxlength="3000" class="input !min-h-24"></textarea>
+                : <input id={`cg-${f.id}`} name={f.id} type={f.type || 'text'} required autocomplete={f.ac} class="input" />}
+            </div>
+          ))}
+          </div>
+          <button type="submit" class="btn btn-primary mt-6">Send the report <Icon name="arrow" size={18} class="arrow" /></button>
+        </Form>
+      </div>
+    </div>
+  </section>
+</Layout>

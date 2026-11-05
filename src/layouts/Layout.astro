@@ -1,0 +1,57 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Icon from '../components/Icon.astro';
+import { DONATE_URL } from '../data/site';
+
+interface Props { title: string; description: string; overlay?: boolean; image?: string }
+const { title, description, overlay = false, image = '/media/hero/hero-poster.webp' } = Astro.props;
+const fullTitle = title === 'Home' ? 'Rotary World Help · Helping Communities Worldwide' : `${title} · Rotary World Help`;
+---
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="theme-color" content="#0a1b33" />
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(image, Astro.site)} />
+    <meta property="og:type" content="website" />
+    <script is:inline>document.documentElement.classList.add('js')</script>
+  </head>
+  <body class="min-h-dvh">
+    <div class="scroll-progress" aria-hidden="true"></div>
+    <a href="#main" class="skip-link">Skip to content</a>
+    <Header overlay={overlay} />
+    <main id="main" tabindex="-1" class={overlay ? '' : 'pt-[72px]'}>
+      <slot />
+    </main>
+    <Footer />
+
+    <!-- Mobile sticky donate bar -->
+    <div class="fixed inset-x-0 bottom-0 z-40 p-3 pb-[max(.75rem,env(safe-area-inset-bottom))] lg:hidden transition-transform duration-500 ease-[cubic-bezier(.16,1,.3,1)] data-[show=false]:translate-y-full" data-donate-bar data-show="false">
+      <a href={DONATE_URL} target="_blank" rel="noopener" class="btn btn-donate shimmer w-full !min-h-14 text-lg shadow-2xl" data-track="sticky-mobile">
+        <Icon name="heart" /> Donate to Rotary World Help
+      </a>
+    </div>
+
+    <dialog class="lightbox" aria-label="Photo viewer">
+      <figure class="relative">
+        <img alt="" class="mx-auto max-h-[82vh] w-auto rounded-2xl object-contain" />
+        <figcaption class="mt-3 text-center text-sm text-white/80"></figcaption>
+      </figure>
+      <button type="button" data-lb-close class="fixed right-4 top-4 grid size-12 place-items-center rounded-full bg-white text-ink cursor-pointer" aria-label="Close photo viewer"><Icon name="x" /></button>
+      <button type="button" data-lb-prev class="fixed left-3 top-1/2 -translate-y-1/2 grid size-12 place-items-center rounded-full bg-white/90 text-ink cursor-pointer" aria-label="Previous photo"><Icon name="chevron-left" /></button>
+      <button type="button" data-lb-next class="fixed right-3 top-1/2 -translate-y-1/2 grid size-12 place-items-center rounded-full bg-white/90 text-ink cursor-pointer" aria-label="Next photo"><Icon name="chevron-right" /></button>
+    </dialog>
+
+    <script>import '../scripts/main.ts';</script>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+---
+// Build-time regional map for one country: the country in gold, a route from Coquitlam when it fits the frame.
+import { geoNaturalEarth1, geoPath } from 'd3-geo';
+import { feature } from 'topojson-client';
+import world from 'world-atlas/countries-110m.json';
+
+interface Props { name: string; lon: number; lat: number }
+const { name, lon, lat } = Astro.props;
+const W = 640, H = 420;
+const alias: Record<string, string> = { 'Dominican Republic': 'Dominican Rep.', 'East Timor': 'Timor-Leste', 'Congo': 'Congo' };
+const land = feature(world as any, (world as any).objects.countries) as any;
+const target = land.features.find((f: any) => f.properties.name === (alias[name] ?? name));
+// Frame: the country plus a margin of about 18 degrees around its centre, so small islands still show context.
+const frame = { type: 'Feature', geometry: { type: 'MultiPoint', coordinates: [[lon - 18, lat - 12], [lon + 18, lat + 12]] } } as any;
+const projection = geoNaturalEarth1().fitExtent([[10, 10], [W - 10, H - 10]], target ? { type: 'FeatureCollection', features: [target, frame] } : frame);
+const path = geoPath(projection);
+const shapes = land.features.filter((f: any) => f.properties.name !== 'Antarctica').map((f: any) => ({ d: path(f), hit: f === target }));
+const [x, y] = projection([lon, lat]) as [number, number];
+---
+<div class="relative overflow-hidden rounded-[1.75rem] bg-ink ring-1 ring-white/10">
+  <div class="absolute inset-0 bg-[radial-gradient(60%_70%_at_50%_45%,rgba(0,103,200,.35),transparent_70%)]" aria-hidden="true"></div>
+  <svg viewBox={`0 0 ${W} ${H}`} class="relative block h-auto w-full" role="img" aria-label={`Map showing ${name}`}>
+    <g>{shapes.map(s => <path d={s.d} class={s.hit ? 'fill-gold/90 stroke-ink' : 'fill-[#1a3358] stroke-[#0a1b33]'} stroke-width=".6" />)}</g>
+    <circle cx={x} cy={y} r="18" fill="#f7a81b" opacity=".18" class="map-pulse" />
+    <circle cx={x} cy={y} r="6" fill="#fff" stroke="#f7a81b" stroke-width="3" />
+  </svg>
+</div>

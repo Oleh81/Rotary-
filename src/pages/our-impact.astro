@@ -1,0 +1,104 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import Img from '../components/Img.astro';
+import VideoCard from '../components/VideoCard.astro';
+import WorldMap from '../components/WorldMap.astro';
+import { img } from '../lib/img';
+import { stats, perContainer, DONATE_URL, CONTAINER_400_YOUTUBE } from '../data/site';
+const vids = ['belize-scooter', 'child-story', 'belize-thank-you', 'cuba-unloading', 'palo-leyte-arrival', 'belize-unloading-2026', 'philippines-iriga-2026', 'ngobit-school', 'tsavo', 'ares-difference', 'ol-pejeta-ares', 'global-tv-this-is-bc'];
+---
+<Layout title="Our Impact" overlay description="See where Rotary World Help containers go: a map of 61 countries, videos from Belize, Cuba, Kenya and the Philippines, and letters from recipients.">
+  <PageHero page="our-impact" eyebrow="Our impact" title="What a container becomes when it arrives." img="1350"
+    lead="Hospital wards furnished, clinics equipped, classrooms supplied. These are the places our volunteers' work ends up, in the words and pictures of the people who received it." />
+
+  <section class="py-16 md:py-20" aria-label="Totals">
+    <div class="wrap">
+      <dl class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {[
+          { v: stats.containers, label: 'containers shipped' }, { v: stats.countries, label: 'countries reached' },
+          { v: stats.valueMillions, pre: '$', suf: 'M', label: 'estimated value shipped' }, { v: stats.peopleMillions, suf: 'M', label: 'people helped (estimated)' },
+        ].map((s, i) => (
+          <div class="reveal rounded-3xl bg-white p-6 ring-1 ring-line" style={`--d:${i}`}>
+            <dd class="font-display text-5xl text-royal tabular">{s.pre}<span data-count={s.v}>{s.v.toLocaleString('en-CA')}</span>{s.suf}</dd>
+            <dt class="mt-1 text-stone">{s.label}</dt>
+          </div>
+        ))}
+      </dl>
+      <p class="mt-4 text-sm text-stone">Each container carries goods with an estimated average replacement value of ${perContainer.replacementValue.toLocaleString('en-CA')} and directly affects the lives of an estimated {perContainer.livesImpacted.toLocaleString('en-CA')}+ people.</p>
+    </div>
+  </section>
+
+  <section id="map" class="relative overflow-hidden bg-ink py-20 md:py-28 text-white on-dark grain scroll-mt-20" aria-labelledby="map-t">
+    <div class="wrap relative">
+      <p class="eyebrow reveal">Where we have sent containers</p>
+      <h2 id="map-t" class="reveal mt-4 font-display text-[clamp(1.9rem,4vw,3.2rem)] leading-tight" style="--d:1">Every line starts in Coquitlam.</h2>
+      <div class="reveal-scale mt-10"><WorldMap id="impact-map" /></div>
+    </div>
+  </section>
+
+  <section class="py-20 md:py-28" aria-labelledby="videos-t">
+    <div class="wrap">
+      <p class="eyebrow reveal">Videos from the field</p>
+      <h2 id="videos-t" class="reveal mt-4 font-display text-[clamp(1.9rem,4vw,3.2rem)] leading-tight" style="--d:1">See it for yourself.</h2>
+      <div class="mt-12 grid gap-x-6 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
+        {vids.map((id, i) => <div class="reveal" style={`--d:${i % 3}`}><VideoCard id={id} /></div>)}
+        <div class="reveal" style="--d:0">
+          <figure>
+            <div class="relative aspect-video overflow-hidden rounded-3xl bg-ink">
+              <img src="/media/video/yt-400.webp" alt="" class="absolute inset-0 h-full w-full object-cover" loading="lazy" width="480" height="270" />
+              <a href={`https://www.youtube.com/watch?v=${CONTAINER_400_YOUTUBE}`} target="_blank" rel="noopener" class="absolute inset-0 grid place-items-center bg-ink/30" aria-label="Watch our 400th container video on YouTube">
+                <span class="grid size-16 place-items-center rounded-full bg-white text-ink shadow-2xl transition-transform hover:scale-110"><Icon name="play" size={26} /></span>
+              </a>
+            </div>
+            <figcaption class="mt-3 font-semibold">Our 400th container <span class="font-normal text-stone">(YouTube)</span></figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-sand/60 py-20 md:py-28" aria-labelledby="eth-t">
+    <div class="wrap grid gap-12 lg:grid-cols-2 lg:items-center">
+      <div>
+        <p class="eyebrow reveal">A letter from Ethiopia</p>
+        <blockquote class="reveal mt-6 font-display text-[clamp(1.6rem,3vw,2.4rem)] leading-snug" style="--d:1">
+          <Icon name="quote" size={32} class="text-gold" />
+          <p class="mt-3">“He and his team have become a pillar of Ethiopia. I greatly admire and respect his commitment to helping the less fortunate.”</p>
+        </blockquote>
+        <p class="reveal mt-5 text-stone" style="--d:2">Ambassador Tewodros Girma of Ethiopia, writing about RWH President Jerry Zdril and his team.</p>
+        <a href="/news/letter-from-ethiopia" class="reveal link-arrow mt-6" style="--d:3">Read the full letter <Icon name="arrow" size={18} /></a>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        {['1784', '1785', '1786', '1787'].map((id, i) => <a href={img(id)?.large} data-lightbox="eth" class="reveal-scale overflow-hidden rounded-2xl" style={`--d:${i}`}><Img id={id} alt="Equipment delivered to Ethiopia" class="aspect-square w-full object-cover transition-transform duration-700 hover:scale-105" sizes="25vw" /></a>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="py-20 md:py-28" aria-labelledby="stories-t">
+    <div class="wrap">
+      <h2 id="stories-t" class="reveal font-display text-[clamp(1.9rem,4vw,3.2rem)] leading-tight">More stories</h2>
+      <ul class="mt-10 grid gap-5 md:grid-cols-3">
+        {[
+          ['/news/panglao-medical-centre', 'Fishing villages’ medical centre receives equipment', 'Philippines'],
+          ['/news/northern-chile-community', 'Medical and dental equipment arrives in northern Chile', 'Chile'],
+          ['/news/caring-hearts-dental-mission-2025', 'A dental mission to the Aeta community', 'Philippines'],
+          ['/news/ukrainian-canadian-social-services-fall', 'A busy fall at Ukrainian Canadian Social Services', 'Ukraine'],
+          ['/news/abbotsford-regional-hospital', 'Abbotsford Regional Hospital champions sustainability', 'Canada'],
+          ['/news/rotary-world-help-filling-hospitals-a-world-away', 'Filling hospitals a world away', 'Media'],
+        ].map(([h, t, c], i) => (
+          <li class="reveal" style={`--d:${i % 3}`}><a href={h} class="group card-lift flex h-full flex-col rounded-3xl bg-white p-6 ring-1 ring-line">
+            <span class="text-xs font-bold uppercase tracking-wider text-royal">{c}</span>
+            <span class="mt-2 font-display text-xl leading-snug group-hover:text-royal transition-colors">{t}</span>
+            <span class="mt-auto pt-6 inline-flex items-center gap-2 font-semibold text-royal">Read <Icon name="arrow" size={16} class="transition-transform group-hover:translate-x-1" /></span>
+          </a></li>
+        ))}
+      </ul>
+      <div class="mt-14 rounded-[2rem] bg-ink p-8 text-white on-dark md:flex md:items-center md:justify-between md:p-12">
+        <p class="font-display text-3xl leading-tight md:max-w-xl">Help the next container reach a hospital that is waiting for it.</p>
+        <a href={DONATE_URL} target="_blank" rel="noopener" class="btn btn-donate shimmer mt-6 md:mt-0" data-magnetic><Icon name="heart" size={18} /> Donate now</a>
+      </div>
+    </div>
+  </section>
+</Layout>

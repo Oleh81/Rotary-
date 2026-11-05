@@ -1,0 +1,401 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+import Img from '../components/Img.astro';
+import VideoCard from '../components/VideoCard.astro';
+import WorldMap from '../components/WorldMap.astro';
+import Globe from '../components/Globe.astro';
+import { stats, perContainer, process, shipments, clubs, countries, DONATE_URL, awards } from '../data/site';
+import { news } from '../lib/cms';
+import { countryHref } from '../lib/countries';
+
+import headlines from '../content/pages.json';
+const headline = headlines.home.title;
+const words = headline.split(' ');
+const latest = shipments[0];
+const fmtDate = (d: string) => new Date(d + 'T12:00:00').toLocaleDateString('en-CA', { month: 'long', day: 'numeric', year: 'numeric' });
+const top = [...countries].sort((a, b) => b.count - a.count).slice(0, 6);
+const stepImg = ['', '246', '1396', '1732', '1809', '1350'];
+const half = Math.ceil(clubs.length / 2);
+const recent = shipments.slice(0, 10);
+const latestNews = news.slice(0, 3);
+---
+<Layout title="Home" overlay description="Rotary World Help ships donated medical and educational equipment from Coquitlam, BC, to communities in need: 482 containers to 65 countries since 1993.">
+
+  <!-- ═════════ HERO ═════════ -->
+  <section class="relative isolate min-h-[100svh] overflow-hidden bg-ink text-white on-dark" aria-labelledby="hero-title">
+    <div class="absolute inset-0 -z-10">
+      <img src="/media/hero/hero-poster.webp" alt="" class="absolute inset-0 h-full w-full object-cover kenburns" width="1280" height="720" fetchpriority="high" />
+      <video class="absolute inset-0 h-full w-full object-cover kenburns" muted loop playsinline autoplay preload="none"
+        poster="/media/hero/hero-poster.webp" data-hero-video data-src="/media/hero/hero-1280.mp4" data-src-sm="/media/hero/hero-720.mp4" aria-hidden="true"></video>
+      <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,27,51,.55)_0%,rgba(10,27,51,.35)_35%,rgba(10,27,51,.92)_100%)]"></div>
+      <div class="absolute inset-0 bg-[radial-gradient(70%_60%_at_15%_70%,rgba(23,69,143,.55),transparent)]"></div>
+    </div>
+
+    <div class="wrap hero-fade flex min-h-[100svh] flex-col justify-end pb-10 pt-32 md:pb-14">
+      <a href={`/gallery#s-${latest.date}`} class="fade-up group mb-6 inline-flex w-fit items-center gap-3 rounded-full bg-white/10 py-1.5 pl-1.5 pr-4 text-sm font-semibold ring-1 ring-white/25 backdrop-blur-md hover:bg-white/20 transition-colors" style="--delay:.1s">
+        <span class="whitespace-nowrap rounded-full bg-gold px-2.5 py-1 text-ink text-xs font-bold uppercase tracking-wider">Latest loading</span>
+        <span>{latest.country}<span class="hidden sm:inline">, {fmtDate(latest.date)}</span></span>
+        <Icon name="arrow" size={16} class="transition-transform group-hover:translate-x-1" />
+      </a>
+
+      <h1 id="hero-title" class="rise font-display text-[clamp(2.6rem,7.2vw,6.4rem)] font-medium leading-[.98] tracking-[-0.03em] max-w-[16ch]">
+        {words.map((w, i) => <span style={`--i:${i}`}>{w}&nbsp;</span>)}
+      </h1>
+      <p class="fade-up mt-6 max-w-2xl text-lg md:text-xl text-white/85 leading-relaxed" style="--delay:.9s">
+        {headlines.home.lead}
+      </p>
+      <div class="fade-up mt-8 flex flex-wrap items-center gap-3" style="--delay:1.05s">
+        <a href={DONATE_URL} target="_blank" rel="noopener" class="btn btn-donate shimmer !min-h-14 !px-7 text-lg" data-magnetic data-track="hero">
+          <Icon name="heart" /> Donate now <Icon name="arrow" class="arrow" />
+        </a>
+        <a href="#story" class="btn btn-ghost !min-h-14 !px-6 text-lg"><Icon name="play" size={18} /> Watch our story</a>
+      </div>
+
+      <!-- Impact ledger: real numbers are in the HTML; JS only animates them. -->
+      <dl class="fade-up mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-3xl bg-white/15 ring-1 ring-white/20 backdrop-blur-xl lg:grid-cols-4" style="--delay:1.25s">
+        {[
+          { v: stats.containers, label: 'containers shipped', icon: 'box' },
+          { v: stats.countries, label: 'countries reached', icon: 'globe' },
+          { v: stats.valueMillions, pre: '$', suf: 'M', label: 'value of goods shipped', icon: 'stethoscope' },
+          { v: stats.peopleMillions, suf: 'M', label: 'people helped (estimated)', icon: 'users' },
+        ].map(s => (
+          <div class="bg-ink/45 px-5 py-5 md:px-7 md:py-6">
+            <dt class="flex items-center gap-2 text-sm text-white/75"><Icon name={s.icon} size={16} class="text-gold" />{s.label}</dt>
+            <dd class="mt-1 font-display text-4xl md:text-5xl font-medium tabular">{s.pre}<span data-count={s.v}>{s.v.toLocaleString('en-CA')}</span>{s.suf}</dd>
+          </div>
+        ))}
+      </dl>
+      <div class="mt-4 flex items-center justify-between text-xs text-white/60">
+        <span>Totals as published by Rotary World Help. Value is estimated replacement value; each container is estimated to help more than 30,000 people.</span>
+        <button type="button" class="hidden md:inline-flex items-center gap-2 rounded-full px-3 py-2 hover:text-white cursor-pointer" data-hero-toggle aria-pressed="false">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+          <span>Pause background video</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ MISSION ═════════ -->
+  <section class="relative py-24 md:py-36" aria-labelledby="mission">
+    <div class="wrap grid gap-14 lg:grid-cols-[1.1fr_.9fr] lg:items-center">
+      <div>
+        <p class="eyebrow reveal">Our mission</p>
+        <h2 id="mission" class="reveal mt-4 font-display text-[clamp(2rem,4.4vw,3.6rem)] leading-[1.06] tracking-tight" style="--d:1">
+          A Canadian charity powered by <em class="not-italic text-royal">{clubs.length} Rotary clubs</em> and a warehouse full of volunteers.
+        </h2>
+        <p class="reveal mt-6 text-lg leading-relaxed text-stone max-w-xl" style="--d:2">
+          We are a Canadian registered charity supported by a network of Rotary clubs in British Columbia. Our purpose is to ship donated
+          medical, educational and humanitarian supplies to countries in need throughout the world.
+        </p>
+        <ul class="mt-10 grid gap-3 sm:grid-cols-3">
+          {[
+            ['hand', 'All volunteer', 'No paid employees and extremely low administration costs.'],
+            ['shield', 'Rotary sanctioned', 'Sanctioned by Rotary International since 1997.'],
+            ['recycle', 'Nothing wasted', 'Equipment is diverted from the BC waste stream.'],
+          ].map(([ic, t, d], i) => (
+            <li class="reveal spot rounded-2xl border border-line bg-white p-5" style={`--d:${i + 3}`}>
+              <span class="grid size-10 place-items-center rounded-xl bg-sky text-royal"><Icon name={ic} size={20} /></span>
+              <p class="mt-4 font-semibold">{t}</p>
+              <p class="mt-1 text-sm text-stone leading-relaxed">{d}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="relative">
+        <div class="clip-in overflow-hidden rounded-[1.5rem]">
+          <Img id="1738" alt="Rotary World Help volunteers with a Canadian flag in front of a loaded container" class="aspect-[4/5] w-full object-cover" sizes="(min-width:1024px) 40vw, 100vw" />
+        </div>
+        <div class="reveal absolute -bottom-8 -left-4 md:-left-10 max-w-[17rem] rounded-2xl bg-ink p-5 text-white shadow-2xl" style="--d:3">
+          <Icon name="quote" size={22} class="text-gold" />
+          <p class="mt-2 font-display text-lg leading-snug">“Rotary World Help is Rotary’s best bang for your buck.”</p>
+          <p class="mt-2 text-xs text-white/60">A saying often heard among our member clubs</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ INSIDE ONE CONTAINER ═════════ -->
+  <section class="relative overflow-hidden bg-sand/60 py-24 md:py-32" aria-labelledby="container-title">
+    <div class="wrap">
+      <div class="max-w-3xl">
+        <p class="eyebrow reveal">Inside one container</p>
+        <h2 id="container-title" class="reveal mt-4 font-display text-[clamp(2rem,4.4vw,3.6rem)] leading-[1.06] tracking-tight" style="--d:1">One 40-foot container can equip a hospital.</h2>
+      </div>
+
+      <div class="mt-14 grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-center">
+        <!-- Illustrated container -->
+        <div class="reveal-scale relative" data-tilt>
+          <svg viewBox="0 0 640 300" class="w-full h-auto drop-shadow-[0_40px_50px_rgba(10,27,51,.35)]" role="img" aria-label="Illustration of a 40-foot shipping container">
+            <defs>
+              <linearGradient id="cbody" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#1d5bb8"/><stop offset="1" stop-color="#123b7a"/></linearGradient>
+              <linearGradient id="cside" x1="0" x2="1"><stop offset="0" stop-color="#0d2c5c"/><stop offset="1" stop-color="#174892"/></linearGradient>
+            </defs>
+            <polygon points="40,70 560,70 610,40 90,40" fill="#2a6ccc" />
+            <rect x="40" y="70" width="520" height="200" rx="4" fill="url(#cbody)" />
+            <polygon points="560,70 610,40 610,240 560,270" fill="url(#cside)" />
+            {Array.from({ length: 26 }).map((_, i) => <rect x={52 + i * 19.6} y="80" width="8" height="180" rx="2" fill="#0f3570" opacity=".55" />)}
+            <rect x="572" y="70" width="3" height="190" fill="#0a244d" /><rect x="593" y="56" width="3" height="190" fill="#0a244d" />
+            <g transform="translate(90 120)">
+              <rect width="170" height="66" rx="10" fill="#fff" opacity=".96" />
+              <text x="16" y="28" font-family="Fraunces Variable, serif" font-size="22" font-weight="600" fill="#0a1b33">ROTARY</text>
+              <text x="16" y="50" font-family="Plus Jakarta Sans Variable, sans-serif" font-size="13" font-weight="700" fill="#0067c8" letter-spacing="2">WORLD HELP</text>
+              <circle cx="140" cy="33" r="18" fill="none" stroke="#f7a81b" stroke-width="5" stroke-dasharray="6 4" />
+            </g>
+            <text x="300" y="250" font-family="Plus Jakarta Sans Variable, sans-serif" font-size="12" font-weight="700" fill="#cfe3f7" letter-spacing="3">RWHU 40FT · COQUITLAM BC</text>
+            <ellipse cx="320" cy="288" rx="290" ry="10" fill="#0a1b33" opacity=".18" />
+          </svg>
+        </div>
+
+        <dl class="grid gap-4">
+          {[
+            { v: perContainer.replacementValue, pre: '$', label: 'estimated average replacement value of the goods in one container' },
+            { v: perContainer.livesImpacted, suf: '+', label: 'lives directly impacted by each container (estimated)' },
+            { v: perContainer.adminFee, pre: '$', label: 'administration fee per container: warehousing, pick-up and our truck' },
+          ].map((s, i) => (
+            <div class="reveal-x rounded-3xl bg-white p-6 md:p-7 ring-1 ring-line" style={`--d:${i}`}>
+              <dd class="font-display text-5xl md:text-6xl font-medium text-royal tabular">{s.pre}<span data-count={s.v}>{s.v.toLocaleString('en-CA')}</span>{s.suf}</dd>
+              <dt class="mt-2 text-stone">{s.label}</dt>
+            </div>
+          ))}
+        </dl>
+      </div>
+      <p class="reveal mt-10 max-w-3xl text-stone">Hospital beds and mattresses, wheelchairs, crutches, X-ray machines and baby incubators, alongside dental, optical,
+        educational and sports equipment and disaster relief supplies.</p>
+    </div>
+  </section>
+
+  <!-- ═════════ JOURNEY ═════════ -->
+  <section class="py-24 md:py-32" aria-labelledby="journey-title">
+    <div class="wrap grid gap-12 lg:grid-cols-[.8fr_1.2fr]">
+      <div class="lg:sticky lg:top-28 lg:self-start">
+        <p class="eyebrow reveal">How it works</p>
+        <h2 id="journey-title" class="reveal mt-4 font-display text-[clamp(2rem,4.4vw,3.6rem)] leading-[1.06] tracking-tight" style="--d:1">Rotary club to Rotary club, sealed until it arrives.</h2>
+        <p class="reveal mt-6 text-lg text-stone leading-relaxed" style="--d:2">Every container is sealed in Coquitlam and opened only by the receiver. A local Rotary club oversees distribution and reports back with photos.</p>
+        <a href="/request-aid" class="reveal link-arrow mt-6" style="--d:3">How a club requests aid <Icon name="arrow" size={18} /></a>
+      </div>
+      <ol class="relative" data-rail>
+        <div class="absolute left-[19px] top-2 bottom-2 w-[2px] bg-line" aria-hidden="true"></div>
+        <div class="rail-fill absolute left-[19px] top-2 bottom-2 w-[2px] bg-gradient-to-b from-gold via-azure to-royal" aria-hidden="true"></div>
+        {process.map((s, i) => (
+          <li class="reveal relative pl-16 pb-12 last:pb-0" style={`--d:${i % 2}`}>
+            <span class="absolute left-0 top-0 grid size-10 place-items-center rounded-full bg-ink text-sm font-bold text-gold ring-4 ring-paper tabular">{s.n}</span>
+            <h3 class="font-display text-2xl md:text-3xl">{s.title}</h3>
+            <p class="mt-2 text-stone leading-relaxed max-w-xl">{s.text}</p>
+            {stepImg[i] && <div class="mt-5 overflow-hidden rounded-2xl card-lift max-w-xl"><Img id={stepImg[i]} alt="" class="aspect-[16/9] w-full object-cover" sizes="(min-width:1024px) 36rem, 100vw" /></div>}
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ═════════ MAP ═════════ -->
+  <section class="relative overflow-hidden bg-ink py-24 md:py-32 text-white on-dark grain" aria-labelledby="map-title">
+    <div class="absolute -left-40 top-20 size-[40rem] rounded-full bg-royal/40 blur-3xl" aria-hidden="true"></div>
+    <div class="wrap relative">
+      <div class="grid gap-10 lg:grid-cols-[1fr_minmax(0,30rem)] lg:items-center">
+        <div class="max-w-3xl">
+          <p class="eyebrow reveal">Where the containers go</p>
+          <h2 id="map-title" class="reveal mt-4 font-display text-[clamp(2rem,4.4vw,3.6rem)] leading-[1.06] tracking-tight" style="--d:1">Five continents. One loading dock.</h2>
+          <p class="reveal mt-5 max-w-xl text-lg text-white/75" style="--d:2">Every gold light on the globe is a country that has received equipment loaded in Coquitlam. Tap a country below to see its containers, photos and stories.</p>
+        <ul class="reveal mt-8 flex flex-wrap gap-2" style="--d:3" aria-label="Top destinations by containers">
+          {top.map(c => <li><a href={countryHref(c.name)} class="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-white/10 px-4 py-1.5 text-sm ring-1 ring-white/15 transition-colors hover:bg-white/20 hover:ring-gold focus-visible:ring-gold"><span class="font-semibold">{c.name}</span> <span class="text-gold tabular">{c.count}</span></a></li>)}
+          <li><a href="/countries" class="inline-flex min-h-11 items-center gap-1 rounded-full px-3 py-1.5 text-sm font-semibold text-gold underline-offset-4 hover:underline">All countries <Icon name="arrow" size={14} /></a></li>
+        </ul>
+        </div>
+        <div class="reveal-scale"><Globe /></div>
+      </div>
+      <div class="reveal-scale mt-12"><WorldMap id="home-map" compact /></div>
+      <p class="mt-5 text-sm text-white/60 max-w-3xl">Countries and container counts from the RWH chart “RWH Shipments – 61 Countries” (May 2022). Tap or hover a dot for details. <a href="/our-impact#map" class="underline hover:text-white">Full list and map</a>.</p>
+    </div>
+  </section>
+
+  <!-- ═════════ GHANA STORY ═════════ -->
+  <section class="py-24 md:py-32" aria-labelledby="ghana-title">
+    <div class="wrap grid gap-12 lg:grid-cols-2 lg:items-center">
+      <div class="grid grid-cols-6 grid-rows-6 gap-3 aspect-square">
+        <div class="reveal-scale col-span-4 row-span-4 overflow-hidden rounded-3xl"><Img id="1350" alt="Hospital beds delivered by Rotary World Help in Ghana, with a member of staff" class="h-full w-full object-cover" sizes="(min-width:1024px) 30vw, 66vw" /></div>
+        <div class="reveal-scale col-span-2 row-span-3 overflow-hidden rounded-3xl" style="--d:1"><Img id="1354" alt="Unloading delivered equipment in Ghana" class="h-full w-full object-cover" sizes="20vw" /></div>
+        <div class="reveal-scale col-span-2 row-span-3 overflow-hidden rounded-3xl" style="--d:2"><Img id="1352" alt="Wheelchairs and equipment delivered in Ghana" class="h-full w-full object-cover" sizes="20vw" /></div>
+        <div class="reveal-scale col-span-4 row-span-2 overflow-hidden rounded-3xl" style="--d:3"><Img id="1351" alt="A hospital ward in Ghana furnished with donated beds" class="h-full w-full object-cover object-[50%_60%]" sizes="40vw" /></div>
+      </div>
+      <div>
+        <p class="eyebrow reveal">From the field · Ghana</p>
+        <h2 id="ghana-title" class="reveal mt-4 font-display text-[clamp(2rem,4vw,3.2rem)] leading-[1.06] tracking-tight" style="--d:1">Loaded in Coquitlam. Unpacked in Ghanaian hospital wards.</h2>
+        <p class="reveal mt-6 text-lg text-stone leading-relaxed" style="--d:2">On January 27, 2024, volunteers loaded a container for Ghana, sponsored by the African Canadian Nursecare Foundation of BC and the Surrey Rotary Club.
+          The photos sent back show what the shipment became: hospital beds, wheelchairs and equipment in use.</p>
+        <a href="/gallery#s-2024-01-27" class="reveal link-arrow mt-6" style="--d:3">See the Ghana photos <Icon name="arrow" size={18} /></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ VIDEO STORIES ═════════ -->
+  <section id="story" class="bg-sand/60 py-24 md:py-32 scroll-mt-20" aria-labelledby="videos-title" data-scroller data-autoplay>
+    <div class="wrap">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <div class="max-w-2xl">
+          <p class="eyebrow reveal">Watch</p>
+          <h2 id="videos-title" class="reveal mt-4 font-display text-[clamp(2rem,4.4vw,3.6rem)] leading-[1.06] tracking-tight" style="--d:1">Stories you can see for yourself.</h2>
+        </div>
+        <div class="flex gap-2">
+          <button type="button" data-prev class="grid size-12 place-items-center rounded-full bg-white ring-1 ring-line hover:bg-ink hover:text-white transition-colors cursor-pointer" aria-label="Previous videos"><Icon name="chevron-left" /></button>
+          <button type="button" data-next class="grid size-12 place-items-center rounded-full bg-white ring-1 ring-line hover:bg-ink hover:text-white transition-colors cursor-pointer" aria-label="Next videos"><Icon name="chevron-right" /></button>
+        </div>
+      </div>
+    </div>
+    <div class="mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-px-5 px-5 pb-4 md:scroll-px-8 md:px-8 lg:px-[max(2rem,calc((100vw-80rem)/2+2rem))] [scrollbar-width:thin]" data-track-x tabindex="0" aria-label="Video stories">
+      <div class="w-[85vw] max-w-[44rem] shrink-0 snap-start"><VideoCard id="global-tv-this-is-bc" /></div>
+      <div class="w-[85vw] max-w-[44rem] shrink-0 snap-start"><VideoCard id="belize-thank-you" /></div>
+      <div class="w-[85vw] max-w-[44rem] shrink-0 snap-start"><VideoCard id="child-story" /></div>
+      <div class="w-[85vw] max-w-[44rem] shrink-0 snap-start"><VideoCard id="ngobit-school" title="Ngobit School, Kenya" caption="Students and staff on the computers delivered to their school." /></div>
+      <div class="w-[85vw] max-w-[44rem] shrink-0 snap-start"><VideoCard id="cuba-unloading" /></div>
+      <div class="w-[85vw] max-w-[44rem] shrink-0 snap-start"><VideoCard id="belize-scooter" /></div>
+      <div class="w-[85vw] max-w-[44rem] shrink-0 snap-start"><VideoCard id="rotaractors-langley" /></div>
+    </div>
+  </section>
+
+  <!-- ═════════ ORIGIN ═════════ -->
+  <section class="relative overflow-hidden bg-ink py-24 md:py-36 text-white on-dark" aria-labelledby="origin-title">
+    <div class="wrap grid gap-12 lg:grid-cols-[1fr_1fr] lg:items-center">
+      <div>
+        <p class="eyebrow reveal">Kyiv, 1992</p>
+        <h2 id="origin-title" class="reveal mt-5 font-display text-[clamp(2.4rem,5.5vw,4.6rem)] leading-[1.02] tracking-tight" style="--d:1">“Eight doctors had to share one stethoscope.”</h2>
+        <p class="reveal mt-6 text-lg text-white/80 leading-relaxed max-w-xl" style="--d:2">Vancouver Rotarians helping to charter a new club in Kyiv were invited to the Chernobyl Children’s Hospital. The doctors were well trained,
+          but surgeons were using gloves autoclaved so often they had turned brown. Back home, the Rotarians found that BC hospitals were discarding exactly what Kyiv lacked.
+          In 1993 they filled the first container.</p>
+        <a href="/our-story" class="reveal link-arrow mt-8" style="--d:3">Read our story <Icon name="arrow" size={18} /></a>
+      </div>
+      <div class="relative">
+        <div class="clip-in overflow-hidden rounded-[1.5rem]"><Img id="293" alt="Jim, Brian and Larry, longtime Rotary World Help loaders" class="w-full" sizes="(min-width:1024px) 45vw, 100vw" /></div>
+        <ol class="mt-6 grid grid-cols-3 gap-3 text-center">
+          {[['1993','First container'],['1997','Rotary sanctioned'],['2013','300th container']].map(([y, t], i) => (
+            <li class="reveal rounded-2xl bg-white/5 p-4 ring-1 ring-white/10" style={`--d:${i}`}><span class="block font-display text-3xl text-gold">{y}</span><span class="text-sm text-white/70">{t}</span></li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ RECENT LOADINGS ═════════ -->
+  <section class="py-24 md:py-32 overflow-hidden" aria-labelledby="recent-title">
+    <div class="wrap flex flex-wrap items-end justify-between gap-6">
+      <div class="max-w-2xl">
+        <p class="eyebrow reveal">Shipment ledger</p>
+        <h2 id="recent-title" class="reveal mt-4 font-display text-[clamp(2rem,4.4vw,3.6rem)] leading-[1.06] tracking-tight" style="--d:1">More than a dozen containers a year. Every one documented.</h2>
+      </div>
+      <a href="/gallery" class="reveal btn btn-ghost">Open the full gallery <Icon name="arrow" size={18} class="arrow" /></a>
+    </div>
+    <div class="marquee mt-12" style="--dur:80s">
+      {[0, 1].map(k => (
+        <ul class="marquee__track" aria-hidden={k === 1 ? 'true' : undefined}>
+          {recent.map(s => (
+            <li class="w-72 shrink-0">
+              <a href={`/gallery#s-${s.date}`} class="group block card-lift rounded-3xl bg-white ring-1 ring-line overflow-hidden" tabindex={k === 1 ? -1 : undefined}>
+                <div class="overflow-hidden"><Img id={s.photos[0]} alt="" class="aspect-[4/3] w-full object-cover" sizes="18rem" /></div>
+                <div class="p-5">
+                  <p class="text-xs font-bold uppercase tracking-wider text-royal">{fmtDate(s.date)}</p>
+                  <p class="mt-1 font-display text-2xl">{s.country}</p>
+                  {s.sponsor && <p class="mt-1 text-sm text-stone line-clamp-2">Sponsored by {s.sponsor}</p>}
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+      ))}
+    </div>
+  </section>
+
+  <!-- ═════════ WAYS TO HELP ═════════ -->
+  <section class="bg-sand/60 py-24 md:py-32" aria-labelledby="help-title">
+    <div class="wrap">
+      <div class="max-w-3xl">
+        <p class="eyebrow reveal">Get involved</p>
+        <h2 id="help-title" class="reveal mt-4 font-display text-[clamp(2rem,4.4vw,3.6rem)] leading-[1.06] tracking-tight" style="--d:1">Remember: everyone can help.</h2>
+      </div>
+      <div class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+        {[
+          { icon: 'heart', title: 'Give money', text: 'Every shipment needs cash for freight. Donate securely through CanadaHelps and receive an official tax receipt.', href: DONATE_URL, cta: 'Donate', ext: true, gold: true },
+          { icon: 'box', title: 'Donate equipment', text: 'Hospitals, clinics, care homes, schools and individuals: we pick up usable medical and educational equipment.', href: '/donate#equipment', cta: 'Offer equipment' },
+          { icon: 'users', title: 'Your Rotary club', text: 'Join for $10 per member per year, or sponsor all or part of a container to a partner club abroad.', href: '/join', cta: 'How to join' },
+          { icon: 'ship', title: 'Request aid', text: 'Rotary clubs outside Canada can apply for a container. Our only criterion for aid is need.', href: '/request-aid', cta: 'Request aid' },
+        ].map((c, i) => (
+          <a href={c.href} target={c.ext ? '_blank' : undefined} rel={c.ext ? 'noopener' : undefined}
+             class={`reveal spot group card-lift flex flex-col rounded-3xl p-7 ring-1 ${c.gold ? 'bg-ink text-white ring-ink on-dark' : 'bg-white ring-line'}`} style={`--d:${i}`}
+             data-track={c.gold ? 'help-card' : undefined}>
+            <span class={`grid size-12 place-items-center rounded-2xl ${c.gold ? 'bg-gold text-ink' : 'bg-sky text-royal'}`}><Icon name={c.icon} size={22} /></span>
+            <h3 class="mt-8 font-display text-2xl">{c.title}</h3>
+            <p class={`mt-2 leading-relaxed ${c.gold ? 'text-white/75' : 'text-stone'}`}>{c.text}</p>
+            <span class={`mt-auto pt-8 inline-flex items-center gap-2 font-bold ${c.gold ? 'text-gold' : 'text-royal'}`}>{c.cta}<Icon name={c.ext ? 'arrow-up-right' : 'arrow'} size={18} class="transition-transform group-hover:translate-x-1" />{c.ext && <span class="sr-only">(opens CanadaHelps in a new tab)</span>}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ CLUBS ═════════ -->
+  <section class="py-20 md:py-28 overflow-hidden" aria-labelledby="clubs-title">
+    <div class="wrap text-center">
+      <p class="eyebrow reveal">Our network</p>
+      <h2 id="clubs-title" class="reveal mt-4 font-display text-[clamp(1.8rem,3.6vw,3rem)] leading-tight" style="--d:1">{clubs.length} member clubs across British Columbia.</h2>
+    </div>
+    {[clubs.slice(0, half), clubs.slice(half)].map((row, r) => (
+      <div class={`marquee mt-8 ${r ? 'reverse' : ''}`} style={`--dur:${r ? 70 : 60}s`}>
+        {[0, 1].map(k => (
+          <ul class="marquee__track" aria-hidden={k === 1 ? 'true' : undefined}>
+            {row.map(c => <li class="shrink-0 rounded-full border border-line bg-white px-5 py-3 font-semibold whitespace-nowrap">{c.name}{c.founding && <span class="ml-2 text-xs font-bold text-gold-deep">FOUNDING</span>}</li>)}
+          </ul>
+        ))}
+      </div>
+    ))}
+    <div class="mt-10 text-center"><a href="/member-clubs" class="link-arrow">See all member clubs <Icon name="arrow" size={18} /></a></div>
+  </section>
+
+  <!-- ═════════ AWARD + NEWS ═════════ -->
+  <section class="pb-24 md:pb-32" aria-labelledby="news-title">
+    <div class="wrap">
+      <div class="reveal grid gap-8 rounded-[2rem] bg-white p-8 ring-1 ring-line md:grid-cols-[auto_1fr] md:items-center md:p-10">
+        <div class="mx-auto w-40 md:w-48"><Img id={awards.macrae.img} alt="The Donald MacRae Peace Award presented to Rotary World Help Network" class="w-full" sizes="12rem" /></div>
+        <div>
+          <p class="eyebrow">Recognition</p>
+          <h2 class="mt-3 font-display text-3xl md:text-4xl leading-tight">Donald MacRae Peace Award</h2>
+          <p class="mt-3 text-stone leading-relaxed max-w-3xl">Given to the Rotarians in Canada, Alaska or the Russian Republic who made the greatest contribution to international peace through humanitarian work,
+            for an estimated $95 million in medical and educational equipment shipped to 51 developing countries.</p>
+          <a href="/our-story#awards" class="link-arrow mt-4">All awards <Icon name="arrow" size={18} /></a>
+        </div>
+      </div>
+
+      <div class="mt-24 flex flex-wrap items-end justify-between gap-6">
+        <h2 id="news-title" class="reveal font-display text-[clamp(2rem,4vw,3.2rem)] leading-tight">Latest news</h2>
+        <a href="/news" class="reveal link-arrow">All news <Icon name="arrow" size={18} /></a>
+      </div>
+      <div class="mt-10 grid gap-6 md:grid-cols-3">
+        {latestNews.map((n, i) => (
+          <a href={`/news/${n.slug}`} class="reveal group card-lift block overflow-hidden rounded-3xl bg-white ring-1 ring-line" style={`--d:${i}`}>
+            <div class="overflow-hidden"><Img id={n.image} alt="" class="aspect-[16/10] w-full object-cover" sizes="(min-width:768px) 30vw, 100vw" /></div>
+            <div class="p-6">
+              <time datetime={n.date} class="text-xs font-bold uppercase tracking-wider text-royal">{fmtDate(n.date)}</time>
+              <h3 class="mt-2 font-display text-xl leading-snug group-hover:text-royal transition-colors">{n.title}</h3>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════ FINAL CTA ═════════ -->
+  <section class="relative isolate overflow-hidden py-28 md:py-40 text-white on-dark" aria-labelledby="cta-title">
+    <Img id="1803" alt="" class="parallax-img absolute inset-0 -z-20 h-full w-full object-cover" sizes="100vw" />
+    <div class="absolute inset-0 -z-10 bg-[linear-gradient(110deg,rgba(10,27,51,.95)_25%,rgba(10,27,51,.6)_70%,rgba(10,27,51,.4))]"></div>
+    <div class="wrap">
+      <h2 id="cta-title" class="reveal font-display text-[clamp(2.4rem,6vw,5.2rem)] leading-[1] tracking-tight max-w-4xl">The equipment is donated. The volunteers are ready. Freight is the gap.</h2>
+      <p class="reveal mt-6 max-w-2xl text-lg text-white/80" style="--d:1">Shipping a container costs thousands of dollars, from about $5,000 to the Philippines to more than $12,000 to South Africa (Tri-City News, 2016). Your gift helps the next container sail.</p>
+      <div class="reveal mt-10 flex flex-wrap gap-3" style="--d:2">
+        <a href={DONATE_URL} target="_blank" rel="noopener" class="btn btn-donate shimmer !min-h-14 !px-8 text-lg" data-magnetic data-track="final">
+          <Icon name="heart" /> Donate through CanadaHelps <Icon name="arrow-up-right" class="arrow" />
+        </a>
+        <a href="/donate" class="btn btn-ghost !min-h-14">Other ways to give</a>
+      </div>
+      <p class="reveal mt-6 flex items-center gap-2 text-sm text-white/60" style="--d:3"><Icon name="lock" size={16} /> Secure payment on CanadaHelps.org · Official Canadian tax receipts · Monthly giving available</p>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,224 @@
+{
+  "clubs": [
+    {
+      "name": "Aldergrove",
+      "founding": false,
+      "website": "https://portal.clubrunner.ca/247"
+    },
+    {
+      "name": "Burnaby",
+      "founding": false,
+      "website": "https://www.rotaryburnaby.org/"
+    },
+    {
+      "name": "Burnaby Deer Lake",
+      "founding": false,
+      "website": "https://www.rotaryburnabydeerlake.org/"
+    },
+    {
+      "name": "Chilliwack",
+      "founding": false,
+      "website": "https://www.rotaryclubofchilliwack.com/"
+    },
+    {
+      "name": "Coquitlam",
+      "founding": true,
+      "website": "https://portal.clubrunner.ca/797/"
+    },
+    {
+      "name": "Coquitlam Sunrise",
+      "founding": false,
+      "website": "https://portal.clubrunner.ca/657/"
+    },
+    {
+      "name": "Cumberland Centennial",
+      "founding": false,
+      "website": ""
+    },
+    {
+      "name": "Golden Ears Sunrise",
+      "founding": false,
+      "website": ""
+    },
+    {
+      "name": "Kelowna Capri",
+      "founding": false,
+      "website": ""
+    },
+    {
+      "name": "Ladner",
+      "founding": false,
+      "website": "https://www.rotary-ladner.org/"
+    },
+    {
+      "name": "Ladysmith",
+      "founding": false,
+      "website": "https://www.ladysmithrotary.org/"
+    },
+    {
+      "name": "Langley",
+      "founding": false,
+      "website": "https://rotarydistrict5050.org/clubinfo/langley"
+    },
+    {
+      "name": "Langley Central",
+      "founding": false,
+      "website": "https://portal.clubrunner.ca/405/"
+    },
+    {
+      "name": "Langley Sunrise",
+      "founding": false,
+      "website": "https://rotarydistrict5050.org/clubinfo/langley-sunrise"
+    },
+    {
+      "name": "New Westminster",
+      "founding": true,
+      "website": "https://newwestrotary.org/"
+    },
+    {
+      "name": "New Westminster Royal City",
+      "founding": false,
+      "website": "https://royalcityrotary.com/"
+    },
+    {
+      "name": "North Delta",
+      "founding": false,
+      "website": "https://www.northdeltarotary.ca/"
+    },
+    {
+      "name": "North Vancouver",
+      "founding": false,
+      "website": "https://rotary5040.org/clubinfo/north-vancouver/"
+    },
+    {
+      "name": "North Vancouver Lions Gate",
+      "founding": true,
+      "website": "https://rotarylionsgate.com/"
+    },
+    {
+      "name": "Pacific Northwest Passport",
+      "founding": false,
+      "website": "https://portal.clubrunner.ca/14430"
+    },
+    {
+      "name": "Pemberton",
+      "founding": false,
+      "website": "https://www.rotarypemberton.ca/"
+    },
+    {
+      "name": "Port Coquitlam Centennial",
+      "founding": false,
+      "website": "https://portal.clubrunner.ca/1780/"
+    },
+    {
+      "name": "Port Moody",
+      "founding": false,
+      "website": "https://portmoodyrotary.ca/"
+    },
+    {
+      "name": "Powell River",
+      "founding": false,
+      "website": "https://portal.clubrunner.ca/757"
+    },
+    {
+      "name": "Prince George Nechako",
+      "founding": false,
+      "website": "https://portal.clubrunner.ca/372"
+    },
+    {
+      "name": "Richmond",
+      "founding": false,
+      "website": "https://www.richmondrotary.com/"
+    },
+    {
+      "name": "Richmond Steveston",
+      "founding": false,
+      "website": "https://portal.clubrunner.ca/772"
+    },
+    {
+      "name": "Richmond Sunrise",
+      "founding": true,
+      "website": "https://richmondsunriserotary.com/"
+    },
+    {
+      "name": "Sechelt",
+      "founding": false,
+      "website": "https://portal.clubrunner.ca/768"
+    },
+    {
+      "name": "Semiahmoo – White Rock",
+      "founding": false,
+      "website": "https://www.semiahmoorotary.org/"
+    },
+    {
+      "name": "Strathcona Sunrise",
+      "founding": false,
+      "website": ""
+    },
+    {
+      "name": "South Surrey",
+      "founding": false,
+      "website": "https://www.southsurreyrotary.com/"
+    },
+    {
+      "name": "Surrey",
+      "founding": false,
+      "website": "https://portal.clubrunner.ca/259"
+    },
+    {
+      "name": "Sunshine Coast",
+      "founding": false,
+      "website": ""
+    },
+    {
+      "name": "Terrace",
+      "founding": false,
+      "website": "https://terracerotary.org/"
+    },
+    {
+      "name": "Tsawwassen",
+      "founding": false,
+      "website": "https://rotarytsawwassen.org/"
+    },
+    {
+      "name": "Vancouver",
+      "founding": true,
+      "website": "https://rotaryvancouver.org/"
+    },
+    {
+      "name": "Vancouver Arbutus",
+      "founding": false,
+      "website": "https://portal.clubrunner.ca/778"
+    },
+    {
+      "name": "Vancouver Cambie",
+      "founding": false,
+      "website": "https://rotary5040.org/clubinfo/vancouver-cambie/"
+    },
+    {
+      "name": "Vancouver Fraserview",
+      "founding": false,
+      "website": "https://vancouverfraserviewrotary.org/"
+    },
+    {
+      "name": "Vancouver Sunrise",
+      "founding": false,
+      "website": "https://rotaryvancouversunrise.ca/"
+    },
+    {
+      "name": "West Vancouver Sunrise",
+      "founding": false,
+      "website": "https://rotarywestvancouversunrise.com/"
+    },
+    {
+      "name": "Whistler",
+      "founding": false,
+      "website": "https://whistler-rotary.org/"
+    },
+    {
+      "name": "Whistler Millennium",
+      "founding": false,
+      "website": "https://rotarywhistler2000.com/"
+    }
+  ]
+}

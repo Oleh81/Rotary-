@@ -1,0 +1,159 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Icon from '../../components/Icon.astro';
+import Img from '../../components/Img.astro';
+import VideoCard from '../../components/VideoCard.astro';
+import CountryMap from '../../components/CountryMap.astro';
+import { countryPages } from '../../lib/countries';
+import { img, hasImg } from '../../lib/img';
+import { DONATE_URL } from '../../data/site';
+import { cover as albumCover, total, fmtAlbumDate, albumName } from '../../lib/albums';
+
+export function getStaticPaths() { return countryPages.map((c, i) => ({ params: { slug: c.slug }, props: { i } })); }
+const { i } = Astro.props as { i: number };
+const c = countryPages[i];
+const prev = countryPages[(i - 1 + countryPages.length) % countryPages.length];
+const next = countryPages[(i + 1) % countryPages.length];
+const display = c.name.replace(/\s*\(.*\)/, '');
+const fmt = (d: string) => new Date(d + 'T12:00:00').toLocaleDateString('en-CA', { month: 'long', day: 'numeric', year: 'numeric' });
+const cover = c.ships[0]?.photos[0] ?? c.stories.find(s => s.image)?.image;
+const empty = !c.ships.length && !c.stories.length && !c.vids.length && !c.archived.length && !c.albums.length;
+const desc = `Rotary World Help has sent ${c.count} ${c.count === 1 ? 'container' : 'containers'} of medical and educational equipment from Coquitlam, BC to ${display}.${c.stories.length ? ` Stories, photos and videos.` : ''}`;
+---
+<Layout title={`${display}: containers, stories and photos`} overlay description={desc.slice(0, 158)} image={cover && hasImg(cover) ? img(cover)!.src : undefined}>
+  <section class="relative isolate overflow-hidden bg-ink pt-[72px] text-white on-dark grain">
+    {cover && <Img id={cover} alt="" eager class="absolute inset-0 -z-20 h-full w-full object-cover opacity-40 kenburns" sizes="100vw" />}
+    <div class="absolute inset-0 -z-10 bg-[linear-gradient(100deg,rgba(10,27,51,.97)_35%,rgba(10,27,51,.75)_70%,rgba(10,27,51,.55))]"></div>
+    <div class="wrap grid gap-12 py-16 md:py-24 lg:grid-cols-[1fr_1.05fr] lg:items-center">
+      <div>
+        <a href="/countries" class="link-arrow fade-up text-sm !text-white/80"><Icon name="chevron-left" size={16} /> All countries</a>
+        <p class="eyebrow fade-up mt-8" style="--delay:.1s">Where the containers go</p>
+        <h1 class="fade-up mt-3 font-display text-[clamp(2.6rem,6vw,5rem)] leading-[1.02] tracking-tight" style="--delay:.2s">{display}</h1>
+        <p class="fade-up mt-6 flex items-baseline gap-3" style="--delay:.35s">
+          <span class="font-display text-7xl text-gold tabular" data-count={c.count}>{c.count}</span>
+          <span class="text-xl text-white/85">{c.count === 1 ? 'container' : 'containers'} of medical and educational equipment, sent from Coquitlam, BC</span>
+        </p>
+        <p class="fade-up mt-4 text-sm text-white/60" style="--delay:.45s">Count from the Rotary World Help chart “RWH Shipments – 61 Countries” (May 2022).</p>
+        <nav class="fade-up mt-8 flex flex-wrap gap-2 text-sm" style="--delay:.55s" aria-label="On this page">
+          {c.ships.length > 0 && <a href="#loadings" class="rounded-full bg-white/10 px-4 py-2 ring-1 ring-white/15 hover:bg-white/20">Loadings · {c.ships.length}</a>}
+          {c.stories.length > 0 && <a href="#stories" class="rounded-full bg-white/10 px-4 py-2 ring-1 ring-white/15 hover:bg-white/20">Stories · {c.stories.length}</a>}
+          {c.albums.length > 0 && <a href="#albums" class="rounded-full bg-white/10 px-4 py-2 ring-1 ring-white/15 hover:bg-white/20">Photo albums · {c.albums.length}</a>}
+          {c.vids.length > 0 && <a href="#videos" class="rounded-full bg-white/10 px-4 py-2 ring-1 ring-white/15 hover:bg-white/20">Videos · {c.vids.length}</a>}
+          {c.archived.length > 0 && <a href="#earlier" class="rounded-full bg-white/10 px-4 py-2 ring-1 ring-white/15 hover:bg-white/20">Earlier loadings · {c.archived.length}</a>}
+        </nav>
+      </div>
+      <div class="reveal-scale"><CountryMap name={c.name} lon={c.lon} lat={c.lat} /></div>
+    </div>
+  </section>
+
+  {c.ships.length > 0 && (
+    <section id="loadings" class="scroll-mt-24 py-20 md:py-24" aria-labelledby="ld-t">
+      <div class="wrap">
+        <p class="eyebrow reveal">Container loadings</p>
+        <h2 id="ld-t" class="reveal mt-3 font-display text-[clamp(1.9rem,4vw,3rem)] leading-tight" style="--d:1">Loaded in Coquitlam for {display}</h2>
+        <div class="mt-10 grid gap-12">
+          {c.ships.map(s => (
+            <article class="reveal">
+              <h3 class="font-display text-2xl">{fmt(s.date)}</h3>
+              <p class="text-stone">{s.sponsor && `Sponsored by ${s.sponsor} · `}<a href={`/gallery/${s.album.slug}`} class="font-semibold text-royal underline-offset-4 hover:underline">See all {total(s.album)} photos{s.album.videos.length ? ` and ${s.album.videos.length} videos` : ''}</a></p>
+              <ul class="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+                {s.photos.map((id, k) => (
+                  <li><a href={img(id)?.large} data-lightbox={`c-${s.date}`} data-caption={`${display}, ${fmt(s.date)}`} data-alt={`Container loading for ${display}, photo ${k + 1}`} class="group block overflow-hidden rounded-2xl">
+                    <Img id={id} alt={`Container loading for ${display}, photo ${k + 1}`} class="aspect-square w-full object-cover transition-transform duration-700 group-hover:scale-105" sizes="(min-width:1024px) 20vw, 45vw" />
+                  </a></li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {c.albums.length > 0 && (
+    <section id="albums" class="scroll-mt-24 py-20 md:py-24" aria-labelledby="al-t">
+      <div class="wrap">
+        <p class="eyebrow reveal">Full photo albums</p>
+        <h2 id="al-t" class="reveal mt-3 font-display text-[clamp(1.9rem,4vw,3rem)] leading-tight" style="--d:1">Earlier loadings and photos from {display}</h2>
+        <ul class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {c.albums.map((a, k) => (
+            <li class="reveal" style={`--d:${k % 4}`}><a href={`/gallery/${a.slug}`} class="group card-lift block overflow-hidden rounded-3xl bg-white ring-1 ring-line">
+              <div class="relative aspect-[4/3] overflow-hidden bg-sand"><img src={albumCover(a)?.src} alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                <span class="absolute bottom-3 left-3 rounded-full bg-ink/80 px-3 py-1 text-xs font-semibold text-white">{a.n} photos{a.videos.length ? ` · ${a.videos.length} videos` : ''}</span></div>
+              <div class="p-5"><span class="block font-display text-xl">{fmtAlbumDate(a.date)}</span><span class="text-sm text-stone">{a.kind === 'archive' ? albumName(a) : 'Container loading in Coquitlam'}</span></div>
+            </a></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  {c.stories.length > 0 && (
+    <section id="stories" class="scroll-mt-24 bg-sand/60 py-20 md:py-24" aria-labelledby="st-t">
+      <div class="wrap">
+        <p class="eyebrow reveal">Stories and letters</p>
+        <h2 id="st-t" class="reveal mt-3 font-display text-[clamp(1.9rem,4vw,3rem)] leading-tight" style="--d:1">Stories that mention {display}</h2>
+        <ul class="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {c.stories.map((s, k) => (
+            <li class="reveal" style={`--d:${k % 3}`}><a href={`/news/${s.slug}`} class="group card-lift flex h-full flex-col overflow-hidden rounded-3xl bg-white ring-1 ring-line">
+              {hasImg(s.image) && <div class="overflow-hidden"><Img id={s.image} alt="" class="aspect-[16/10] w-full object-cover transition-transform duration-700 group-hover:scale-105" sizes="(min-width:1024px) 30vw, 100vw" /></div>}
+              <div class="flex flex-1 flex-col p-6">
+                <time datetime={s.date} class="text-xs font-bold uppercase tracking-wider text-royal">{fmt(s.date)}</time>
+                <span class="mt-2 font-display text-xl leading-snug group-hover:text-royal transition-colors">{s.title}</span>
+                <span class="mt-2 text-sm text-stone">{s.excerpt}</span>
+                <span class="mt-auto inline-flex items-center gap-2 pt-5 font-semibold text-royal">Read <Icon name="arrow" size={16} class="transition-transform group-hover:translate-x-1" /></span>
+              </div>
+            </a></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  {c.vids.length > 0 && (
+    <section id="videos" class="scroll-mt-24 py-20 md:py-24" aria-labelledby="vd-t">
+      <div class="wrap">
+        <p class="eyebrow reveal">Videos</p>
+        <h2 id="vd-t" class="reveal mt-3 font-display text-[clamp(1.9rem,4vw,3rem)] leading-tight" style="--d:1">See it in {display}</h2>
+        <div class="mt-10 grid gap-x-6 gap-y-10 md:grid-cols-2">{c.vids.map((v, k) => <div class="reveal" style={`--d:${k % 2}`}><VideoCard id={v} /></div>)}</div>
+      </div>
+    </section>
+  )}
+
+  {c.archived.length > 0 && (
+    <section id="earlier" class="scroll-mt-24 py-20 md:py-24" aria-labelledby="ar-t">
+      <div class="wrap max-w-4xl">
+        <p class="eyebrow reveal">From the loading log</p>
+        <h2 id="ar-t" class="reveal mt-3 font-display text-[clamp(1.9rem,4vw,3rem)] leading-tight" style="--d:1">Earlier loadings</h2>
+        <ul class="mt-8 divide-y divide-line rounded-3xl bg-white ring-1 ring-line">
+          {c.archived.map(a => <li class="flex gap-5 px-6 py-4"><span class="w-14 shrink-0 font-display text-xl text-royal tabular">{a.year}</span><span>{a.text}</span></li>)}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  {empty && (
+    <section class="py-20 md:py-24">
+      <div class="wrap max-w-3xl">
+        <p class="reveal text-lg text-stone">We have not yet published stories or photos from {display}. If you received equipment from Rotary World Help, we would love to hear from you.</p>
+        <a href="/contact" class="reveal btn btn-primary mt-6">Share your story <Icon name="arrow" size={18} class="arrow" /></a>
+      </div>
+    </section>
+  )}
+
+  <section class="pb-24">
+    <div class="wrap">
+      <div class="rounded-[2rem] bg-ink p-8 text-white on-dark md:flex md:items-center md:justify-between md:p-12">
+        <p class="font-display text-3xl leading-tight md:max-w-xl">Help the next container reach a hospital or school that is waiting for it.</p>
+        <div class="mt-6 flex flex-wrap gap-3 md:mt-0">
+          <a href={DONATE_URL} target="_blank" rel="noopener" class="btn btn-donate shimmer" data-magnetic><Icon name="heart" size={18} /> Donate</a>
+          <a href="/request-aid" class="btn btn-ghost">Request aid</a>
+        </div>
+      </div>
+      <nav class="mt-10 flex flex-wrap justify-between gap-4" aria-label="More countries">
+        <a href={`/countries/${prev.slug}`} class="link-arrow"><Icon name="chevron-left" size={16} /> {prev.name.replace(/\s*\(.*\)/, '')}</a>
+        <a href={`/countries/${next.slug}`} class="link-arrow">{next.name.replace(/\s*\(.*\)/, '')} <Icon name="arrow" size={16} /></a>
+      </nav>
+    </div>
+  </section>
+</Layout>

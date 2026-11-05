@@ -1,0 +1,32 @@
+{
+  "name": "rotary-world-help",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "node scripts/uploads.mjs && node scripts/loading-drive.mjs && astro dev",
+    "build": "node scripts/uploads.mjs && node scripts/loading-drive.mjs && astro build && node scripts/csp.mjs",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/react": "^4.4.2",
+    "@astrojs/vercel": "^8.2.11",
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
+    "@keystatic/astro": "^6.0.0",
+    "@keystatic/core": "^0.6.9",
+    "@markdoc/markdoc": "^0.5.11",
+    "@tailwindcss/vite": "^4.3.4",
+    "astro": "^5.18.2",
+    "cobe": "^0.6.3",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "tailwindcss": "^4.3.4"
+  },
+  "devDependencies": {
+    "d3-geo": "^3.1.2",
+    "sharp": "^0.35.5",
+    "topojson-client": "^3.1.0",
+    "world-atlas": "^2.0.2"
+  }
+}
