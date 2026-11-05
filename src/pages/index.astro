@@ -5,6 +5,7 @@ import Img from '../components/Img.astro';
 import VideoCard from '../components/VideoCard.astro';
 import WorldMap from '../components/WorldMap.astro';
 import Globe from '../components/Globe.astro';
+import LoadingCartoon from '../components/LoadingCartoon.astro';
 import { stats, perContainer, process, shipments, clubs, countries, DONATE_URL, awards } from '../data/site';
 import { news } from '../lib/cms';
 import { countryHref } from '../lib/countries';
@@ -124,27 +125,9 @@ const latestNews = news.slice(0, 3);
       </div>
 
       <div class="mt-14 grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-center">
-        <!-- Illustrated container -->
-        <div class="reveal-scale relative" data-tilt>
-          <svg viewBox="0 0 640 300" class="w-full h-auto drop-shadow-[0_40px_50px_rgba(10,27,51,.35)]" role="img" aria-label="Illustration of a 40-foot shipping container">
-            <defs>
-              <linearGradient id="cbody" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#1d5bb8"/><stop offset="1" stop-color="#123b7a"/></linearGradient>
-              <linearGradient id="cside" x1="0" x2="1"><stop offset="0" stop-color="#0d2c5c"/><stop offset="1" stop-color="#174892"/></linearGradient>
-            </defs>
-            <polygon points="40,70 560,70 610,40 90,40" fill="#2a6ccc" />
-            <rect x="40" y="70" width="520" height="200" rx="4" fill="url(#cbody)" />
-            <polygon points="560,70 610,40 610,240 560,270" fill="url(#cside)" />
-            {Array.from({ length: 26 }).map((_, i) => <rect x={52 + i * 19.6} y="80" width="8" height="180" rx="2" fill="#0f3570" opacity=".55" />)}
-            <rect x="572" y="70" width="3" height="190" fill="#0a244d" /><rect x="593" y="56" width="3" height="190" fill="#0a244d" />
-            <g transform="translate(90 120)">
-              <rect width="170" height="66" rx="10" fill="#fff" opacity=".96" />
-              <text x="16" y="28" font-family="Fraunces Variable, serif" font-size="22" font-weight="600" fill="#0a1b33">ROTARY</text>
-              <text x="16" y="50" font-family="Plus Jakarta Sans Variable, sans-serif" font-size="13" font-weight="700" fill="#0067c8" letter-spacing="2">WORLD HELP</text>
-              <circle cx="140" cy="33" r="18" fill="none" stroke="#f7a81b" stroke-width="5" stroke-dasharray="6 4" />
-            </g>
-            <text x="300" y="250" font-family="Plus Jakarta Sans Variable, sans-serif" font-size="12" font-weight="700" fill="#cfe3f7" letter-spacing="3">RWHU 40FT · COQUITLAM BC</text>
-            <ellipse cx="320" cy="288" rx="290" ry="10" fill="#0a1b33" opacity=".18" />
-          </svg>
+        <!-- Cartoon: volunteers loading a container -->
+        <div class="reveal-scale relative overflow-hidden rounded-[1.5rem] shadow-[0_40px_60px_-30px_rgba(10,27,51,.45)] ring-1 ring-line">
+          <LoadingCartoon />
         </div>
 
         <dl class="grid gap-4">

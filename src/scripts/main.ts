@@ -312,3 +312,7 @@ $$<HTMLElement>('.map-comets').forEach(layer => {
   new ResizeObserver(fit).observe(svg); fit();
   liveIO.observe(layer);
 });
+
+/* Loading cartoon: animate only while on screen */
+const cartoonIO = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('live', e.isIntersecting)), { rootMargin: '50px' });
+$$('[data-cartoon]').forEach(el => cartoonIO.observe(el));
